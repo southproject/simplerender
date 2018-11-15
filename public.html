@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <meta charset="utf-8" />
+    
+    
+</head>
+<body>
+    
+    
+    <div id="canvas" style="width:1418px;height:904px;border:1px dashed" ></div>
+    <div style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">button</Button></div>
+   
+    
+    <script src="./dist/srender.js"></script>
+    <script type="text/javascript">
+    var dom=document.getElementById("canvas")
+
+    var sr = srender.init(dom)
+    var w = 1000
+    var h = 800
+    /*
+    var group=new srender.Group()
+    var sun=new srender.Circle({
+        shape:{
+            cx: 100,
+            cy: 100,
+            r: 50
+        }
+    })
+    var sun1=new srender.Circle({
+        shape:{
+            cx:70,
+            cy: 60,
+            r: 30
+        }
+    })
+    var sun2=new srender.Circle({
+        shape:{
+            cx:40,
+            cy: 60,
+            r: 10
+        }
+    })
+    group.add(sun); 
+    group.add(sun1); 
+    group.add(sun2); 
+   */
+    //sr.remove(sun2);
+
+   // setInterval("ar()",1000)
+    var flag=false
+    function ar(){
+        if(flag){sr.add(sun2);flag=false }
+        else{sr.remove(sun2);flag=true;}
+    }
+    
+    for (var i = 0; i < 3; ++i) {
+        var r = 50 * Math.random() + 20;
+        var circle = new srender.Circle({
+            shape: {
+                cx:(w * 0.6 - r * 2) * Math.random() + r + w * 0.2,
+                cy:(h * 0.6 - r * 2) * Math.random() + r + h * 0.2,
+                r: r
+            },
+    
+        })
+       
+        sr.add(circle);
+    }
+    
+    var sun3=new srender.Circle({
+        shape:{
+            cx:70,
+            cy: 90,
+            r: 90
+        },
+        style: {
+            fill: 'transparent',
+            stroke: '#FF6EBE'
+        },
+    })
+    sr.add(sun3)
+    var rect1=new srender.Rect({
+        shape:{
+       
+        r: 2,
+
+     //   x: 100,
+      //  y: 100,
+        width: 100,
+        height: 100
+    },
+    position:[100,100],
+    draggable:true
+    })
+    sr.add(rect1)
+    rect1.on('click',function(){
+        console.log(rect1.position)
+    })
+    function addNew(){
+        console.log("add")
+        var c=new srender.Circle({
+        shape:{
+            cx: 10,
+            cy: 10,
+            r: 30
+        },
+        draggable:true
+    })
+    sr.add(c);
+    }
+    console.log(sr.painter)
+  //  sr.add(group)
+    </script>
+</body>
+
+
+
+</html>
+
+<!--style="border:1px dashed gray;">
