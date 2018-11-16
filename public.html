@@ -10,46 +10,39 @@
     
     
     <div id="canvas" style="width:1418px;height:904px;border:1px dashed" ></div>
-    <div style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">button</Button></div>
-   
+    <div style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">button1</Button></div>
+    <div style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">container</Button></div>
     
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("canvas")
+    var elementStyle = {
+        stroke: '#ccc',
+        fill: 'white'
+    };
 
     var sr = srender.init(dom)
-    var w = 1000
-    var h = 800
-    /*
-    var group=new srender.Group()
-    var sun=new srender.Circle({
-        shape:{
-            cx: 100,
-            cy: 100,
-            r: 50
-        }
-    })
-    var sun1=new srender.Circle({
-        shape:{
-            cx:70,
-            cy: 60,
-            r: 30
-        }
-    })
-    var sun2=new srender.Circle({
-        shape:{
-            cx:40,
-            cy: 60,
-            r: 10
-        }
-    })
-    group.add(sun); 
-    group.add(sun1); 
-    group.add(sun2); 
-   */
-    //sr.remove(sun2);
-
-   // setInterval("ar()",1000)
+    var w = sr.getWidth();
+    var h = sr.getHeight();
+    var group = new srender.Group();
+    for (var i = 0; i < 3; ++i) {
+        var r = 50 * Math.random() + 20;
+        var circle = new srender.Circle({
+            shape: {
+                cx: 0,
+                cy: 0,
+                r: r
+            },
+            position: [
+                (w * 0.6 - r * 2) * Math.random() + r + w * 0.2,
+                (h * 0.6 - r * 2) * Math.random() + r + h * 0.2
+            ],
+            style: elementStyle,
+            draggable: true
+        })
+        group.add(circle);
+    }
+    sr.add(group)
     var flag=false
     function ar(){
         if(flag){sr.add(sun2);flag=false }
@@ -93,7 +86,8 @@
         height: 100
     },
     position:[100,100],
-    draggable:true
+    draggable:true,
+    style: elementStyle,
     })
     sr.add(rect1)
     rect1.on('click',function(){
@@ -111,8 +105,107 @@
     })
     sr.add(c);
     }
-    console.log(sr.painter)
-  //  sr.add(group)
+    var rect=null
+    function addContainer(){
+
+        rect&&sr.remove(rect)
+        var start,end
+        sr.on('mousedown', function(e) {
+         start =[e.event.zrX,e.event.zrY];
+    })
+        sr.on('mouseup', function(e) {
+         end =[e.event.zrX,e.event.zrY];
+       var rect=new srender.Rect({
+        shape:{
+        r: 2,
+        x: start[0],
+        y: start[1],
+        width: end[0]-start[0],
+        height: end[1]-start[1]
+    },
+    position:[100,100],
+    draggable:true,
+  //  style: elementStyle,
+    })
+        sr.add(rect);
+    })
+
+    }
+   //******
+   var lockFlag=false;
+   var s; //定义路径对象
+            var sL = []; //路径数组
+            var isDraw = false;
+            function pen1(e) {
+                isDraw = true; //表示正在画线了
+                s = new srender.Polyline({ //初始化线条
+                    shape: {
+                        points: sL,
+                        smooth: 'spline',
+                    },
+                    style: {
+                    stroke: 'rgba(220, 20, 60, 0.8)',
+                     lineWidth: 2
+                      },
+                });
+                sr.add(s); //将线条添加到图层上
+            }
+            function pen2(e) {
+                if (isDraw) { //判断是否是画线状态
+                    var x = e.event.zrX;
+                    var y = e.event.zrY; //获取鼠标位置
+                    sL.push([x, y]); //将位置存入数组
+                    /*
+                    zr.modShape(s.id, {
+                        pointList: sL
+                    }); //更新线条对象的位置数组
+                    */
+                    s.attr({
+                        shape: {
+                        pointList: sL,
+                    }
+                    })
+                //    sr.refresh(); //刷新图层
+                }
+            }
+            function pen3(e) {
+                isDraw = false; //退出画线状态
+                sL = []; //清空线条路经,若不清空将会和上次画线连接到一起
+                // s=null;    //清空线条对象
+            }
+   function Pen(){
+       if(lockFlag) {lockFlag=false;console.log(pen1);sr.off('mousedown',pen1);  console.log(sr.handler._$handlers['mousedown']);
+             sr.off('mousemove',pen2);
+            sr.off('mouseup',pen3);return}
+          console.log(s)
+            
+             sr.on('mousedown',pen1);
+             console.log(sr.handler._$handlers['mousedown'])
+             sr.on('mousemove',pen2);
+            sr.on('mouseup',pen3);
+            lockFlag=true;
+        }
+   //*****
+   var points = [];
+        for (var i = 0; i < 10; i++) {
+            points.push([Math.random() * 300 + 100, Math.random() * 300 + 100]);
+        }
+   var smoothLine = new srender.Polyline({
+            position: [10, 10],
+            style : {
+                lineDash: [5, 5, 10, 10],
+                stroke: 'rgba(220, 20, 60, 0.8)',
+                lineWidth: 2
+            },
+            shape: {
+                smooth: 'spline',
+                points: points
+            },
+            draggable:true
+        });
+        sr.add(smoothLine);
+        console.log(sr.handler._$handlers['mousedown'])
+        console.log(sr.handler.proxy._$handlers)
     </script>
 </body>
 

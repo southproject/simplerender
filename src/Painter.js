@@ -426,10 +426,10 @@ Painter.prototype = {
             ctx.save();
 
             var start = paintAll ? layer.__startIndex : layer.__drawIndex;
-            console.log("start:"+start)
+          //  console.log("start:"+start)
             var useTimer = !paintAll && layer.incremental && Date.now;
             var startTime = useTimer && Date.now();
-            console.log("useTimer:"+useTimer)
+          //  console.log("useTimer:"+useTimer)
             var clearColor = layer.zlevel === this._zlevelList[0]
                 ? this._backgroundColor : null;
             // All elements in this layer are cleared.
