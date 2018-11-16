@@ -18,6 +18,7 @@ Draggable.prototype = {
     constructor: Draggable,
 
     _dragStart: function (e) {
+        console.log("this?:"+this)
         var draggingTarget = e.target;
         if (draggingTarget && draggingTarget.draggable) {
             this._draggingTarget = draggingTarget;
@@ -25,7 +26,7 @@ Draggable.prototype = {
             this._x = e.offsetX;
             this._y = e.offsetY;
 
-            this.dispatchToElement(param(draggingTarget, e), 'dragstart', e.event);
+            this.dispatchToElement(param(draggingTarget, e), 'dragstart', e.event);//为元素拖动过程中定义拖拽事件提供触发点
         }
     },
 
@@ -43,8 +44,9 @@ Draggable.prototype = {
 
             draggingTarget.drift(dx, dy, e);
             this.dispatchToElement(param(draggingTarget, e), 'drag', e.event);
-
-            var dropTarget = this.findHover(x, y, draggingTarget).target;
+         //   console.log("draggingTarget:"+draggingTarget)
+            var dropTarget = this.findHover(x, y, draggingTarget).target;//拖动元素的放置目标
+           // console.log("dropTarget:"+dropTarget)
             var lastDropTarget = this._dropTarget;
             this._dropTarget = dropTarget;
 
