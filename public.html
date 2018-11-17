@@ -28,6 +28,8 @@
     var h = sr.getHeight();
     var group = new srender.Group();
     var nowshape;//当前选择的图形
+    nowshape=null;
+    var nowstroke='#ccc';//当前物体的原来的描边颜色
     for (var i = 0; i < 3; ++i) {
         var r = 50 * Math.random() + 20;
         var circle = new srender.Circle({
@@ -107,11 +109,36 @@
         draggable:true
     })
     sr.add(c);
-       c.on('click',function(e) {
-      //sr.remove(c);
-      nowshape=this;
-    });
+    nowChoose(c);
+       //c.on('click',function(e) {
+      // nowChoose(this);
+   // });
 
+    }
+    function nowChoose(e)
+    {
+    e.on('click',function(e) {
+    if(nowshape!=null)
+    {
+    nowshape.attr({
+      style:{
+     shadowBlur:0,
+     shadowColor:'transparent',
+     stroke:nowstroke
+     //stroke:'null'
+      }
+      });
+      }
+      nowshape=this;
+      nowstroke=this.style.stroke;
+      this.attr({
+      style:{
+     shadowBlur:20,
+     shadowColor:'#699',
+     stroke:'#E99'
+      }
+      });
+          });
     }
     var rect=null
     function addContainer(){
@@ -157,9 +184,10 @@
                       },
                 });
                 sr.add(s); //将线条添加到图层上
-                    s.on('click',function(e) {
-                 nowshape=this;
-                 });
+                    //s.on('click',function(e) {
+                // nowshape=this;
+                // });
+                nowChoose(s);
             }
             function pen2(e) {
                 if (isDraw) { //判断是否是画线状态
@@ -219,7 +247,12 @@
         console.log(sr.handler.proxy._$handlers)
          function removeShape()
         {
+        console.log(nowshape);
+        if(nowshape!=null)
+        {
          sr.remove(nowshape);
+         nowshape=null;
+         }
         }
         function clearShape()
         {
