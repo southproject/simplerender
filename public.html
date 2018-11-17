@@ -12,6 +12,8 @@
     <div id="canvas" style="width:1418px;height:904px;border:1px dashed" ></div>
     <div style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">button1</Button></div>
     <div style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">container</Button></div>
+    <div style="color:black;" ><Button onclick=removeShape() style="background-image:linear-gradient(#f5c153,#ea920d)">删除</Button></div>
+    <div style="color:black;" ><Button onclick=clearShape() style="background-image:linear-gradient(#f5c153,#ea920d)">清空</Button></div>
     
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
@@ -25,6 +27,7 @@
     var w = sr.getWidth();
     var h = sr.getHeight();
     var group = new srender.Group();
+    var nowshape;//当前选择的图形
     for (var i = 0; i < 3; ++i) {
         var r = 50 * Math.random() + 20;
         var circle = new srender.Circle({
@@ -104,6 +107,11 @@
         draggable:true
     })
     sr.add(c);
+       c.on('click',function(e) {
+      //sr.remove(c);
+      nowshape=this;
+    });
+
     }
     var rect=null
     function addContainer(){
@@ -149,6 +157,9 @@
                       },
                 });
                 sr.add(s); //将线条添加到图层上
+                    s.on('click',function(e) {
+                 nowshape=this;
+                 });
             }
             function pen2(e) {
                 if (isDraw) { //判断是否是画线状态
@@ -206,6 +217,14 @@
         sr.add(smoothLine);
         console.log(sr.handler._$handlers['mousedown'])
         console.log(sr.handler.proxy._$handlers)
+         function removeShape()
+        {
+         sr.remove(nowshape);
+        }
+        function clearShape()
+        {
+        sr.remove();
+        }
     </script>
 </body>
 
