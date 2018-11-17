@@ -3,27 +3,37 @@
 <head>
     <title></title>
     <meta charset="utf-8" />
-    
+    <style type="text/css">
+        .btn{
+            display: inline-block
+        }
+      </style>
     
 </head>
 <body>
-    
+   
     
     <div id="canvas" style="width:1418px;height:904px;border:1px dashed" ></div>
-    <div style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">button1</Button></div>
-    <div style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">container</Button></div>
-    
+    <div class='btn' style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">addCircle</Button></div>
+    <div class='btn' style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">drawer</Button></div>
+    <div class='btn' style="color:black;" ><Button onclick=Container() style="background-image:linear-gradient(#f5c153,#ea920d)">bounding</Button></div>
+    <div class='btn' style="color:black;" ><Button onclick=Clear() style="background-image:linear-gradient(#f5c153,#ea920d)">清空</Button></div>
+    <div class='btn' style="color:black;" ><Button onclick=ClearShape() style="background-image:linear-gradient(#f5c153,#ea920d)">删除元素</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("canvas")
     var elementStyle = {
         stroke: '#ccc',
-        fill: 'white'
+        fill: 'white',
+        lineDash: [5, 5, 10, 10],
     };
-
+    var handlerNames={}
     var sr = srender.init(dom)
     var w = sr.getWidth();
     var h = sr.getHeight();
+    //
+    var select
+    //
     var group = new srender.Group();
     for (var i = 0; i < 3; ++i) {
         var r = 50 * Math.random() + 20;
@@ -94,7 +104,6 @@
         console.log(rect1.position)
     })
     function addNew(){
-        console.log("add")
         var c=new srender.Circle({
         shape:{
             cx: 10,
@@ -103,35 +112,62 @@
         },
         draggable:true
     })
+    c.on('dblclick',function(){
+        select=c
+    })
     sr.add(c);
     }
-    var rect=null
-    function addContainer(){
-
-        rect&&sr.remove(rect)
-        var start,end
-        sr.on('mousedown', function(e) {
-         start =[e.event.zrX,e.event.zrY];
-    })
-        sr.on('mouseup', function(e) {
-         end =[e.event.zrX,e.event.zrY];
-       var rect=new srender.Rect({
-        shape:{
-        r: 2,
-        x: start[0],
-        y: start[1],
-        width: end[0]-start[0],
-        height: end[1]-start[1]
-    },
-    position:[100,100],
-    draggable:true,
-  //  style: elementStyle,
-    })
-        sr.add(rect);
-    })
-
+    //****
+    function Clear(){
+        sr.remove()
     }
-   //******
+    function ClearShape(){
+        sr.remove(select)
+    }
+    //*************************************************Container
+    var rect=null
+    var start,end
+    var isContain=false;
+    function container1(e){
+        isContain=true;
+        start =[e.event.zrX,e.event.zrY];
+        rect=new srender.Rect({
+            shape:{
+            r: 2,
+            x: start[0],
+            y: start[1],
+            width: 0,
+            height: 0
+    },
+   // position:[100,100],
+  //  draggable:true,
+      style: elementStyle,
+    })
+    }
+    function container2(e){
+        if(!isContain) return
+        sr.add(rect)
+        rect.attr({
+            shape: {
+                width:e.event.zrX-start[0],
+                height:e.event.zrY-start[1]
+            }
+        })
+    }
+    function container3(e){
+        isContain=false
+        start=end=null
+    }
+    function Container(){
+
+       
+        
+        sr.on('mousedown',container1)
+        sr.on('mousemove',container2)
+        sr.on('mouseup',container3)
+    }
+    //*****************************************************
+   //******************************************************penDrawer
    var lockFlag=false;
    var s; //定义路径对象
    var sL = []; //路径数组
@@ -173,19 +209,23 @@
                 sL = []; //清空线条路经,若不清空将会和上次画线连接到一起
                 // s=null;    //清空线条对象
             }
+            //console.log(sr.handler._$handlers['mousedown'])
    function Pen(){
-       if(lockFlag) {lockFlag=false;console.log(pen1);sr.off('mousedown',pen1);  console.log(sr.handler._$handlers['mousedown']);
-             sr.off('mousemove',pen2);
-            sr.off('mouseup',pen3);return}
-          console.log(s)
-            
-             sr.on('mousedown',pen1);
-             console.log(sr.handler._$handlers['mousedown'])
-             sr.on('mousemove',pen2);
+       if(lockFlag){
+           lockFlag=false;
+           sr.off('mousedown',pen1);
+            sr.off('mousemove',pen2);
+            sr.off('mouseup',pen3);
+            return;
+        }
+      
+        
+            sr.on('mousedown',pen1);
+            sr.on('mousemove',pen2);
             sr.on('mouseup',pen3);
             lockFlag=true;
         }
-   //*****
+   //*******************************************************************************
    var points = [];
         for (var i = 0; i < 10; i++) {
             points.push([Math.random() * 300 + 100, Math.random() * 300 + 100]);
