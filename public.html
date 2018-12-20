@@ -19,13 +19,14 @@
     <div class='btn' style="color:black;" ><Button onclick=Container() style="background-image:linear-gradient(#f5c153,#ea920d)">bounding</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=Clear() style="background-image:linear-gradient(#f5c153,#ea920d)">清空</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=ClearShape() style="background-image:linear-gradient(#f5c153,#ea920d)">删除元素</Button></div>
+    <div class='btn' ><Button onclick=addImage() style="background-image:linear-gradient(#f5c153,#ea920d)">加入图片</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("canvas")
     var elementStyle = {
         stroke: '#ccc',
         fill: 'white',
-        lineDash: [5, 5, 10, 10],
+       // lineDash: [5, 5, 10, 10],
     };
     var handlerNames={}
     var sr = srender.init(dom)
@@ -33,6 +34,7 @@
     var h = sr.getHeight();
     //
     var select
+  //  var nowShape
     //
     var group = new srender.Group();
     for (var i = 0; i < 3; ++i) {
@@ -118,6 +120,19 @@
     sr.add(c);
     }
     //****
+    function addImage(){
+        var img=new srender.Image({
+        style:{
+            x: 100,
+            y: 100,
+            width:100,
+            height:100,
+            image: '1.jpg'
+        },
+        draggable:true
+    })
+        sr.add(img)
+    }
     function Clear(){
         sr.remove()
     }
@@ -141,7 +156,11 @@
     },
    // position:[100,100],
   //  draggable:true,
-      style: elementStyle,
+      style: {
+        stroke: '#ccc',
+        fill: 'none',
+        lineDash: [5, 5, 10, 10],
+    },
     })
     }
     function container2(e){
@@ -157,10 +176,13 @@
     function container3(e){
         isContain=false
         start=end=null
+        sr.off('mousedown',container1)
+        sr.off('mousemove',container2)
+        sr.off('mouseup',container3)
     }
     function Container(){
-
-       
+       // if(lockFlag)
+       rect&&sr.remove(rect)
         
         sr.on('mousedown',container1)
         sr.on('mousemove',container2)
@@ -183,7 +205,9 @@
                     stroke: 'rgba(220, 20, 60, 0.8)',
                      lineWidth: 2
                       },
+                      draggable:true,
                 });
+             
                 sr.add(s); //将线条添加到图层上
             }
             function pen2(e) {
@@ -244,8 +268,9 @@
             draggable:true
         });
         sr.add(smoothLine);
-        console.log(sr.handler._$handlers['mousedown'])
-        console.log(sr.handler.proxy._$handlers)
+     //   console.log(sr.handler._$handlers['mousedown'])
+     //   console.log(sr.handler.proxy._$handlers)
+        console.log(srender.Circle)
     </script>
 </body>
 

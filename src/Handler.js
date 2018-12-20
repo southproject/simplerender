@@ -71,6 +71,8 @@ var Handler = function(storage, painter, proxy, painterRoot) {
      */
     this._hovered = {};
 
+    this._select = {};
+
     /**
      * @private
      * @type {Date}
@@ -291,12 +293,24 @@ util.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'contextme
         // Find hover again to avoid click event is dispatched manually. Or click is triggered without mouseover
         var hovered = this.findHover(event.zrX, event.zrY);   //储存在proxy._$handlers中的this
         var hoveredTarget = hovered.target;
-
+        
         if (name === 'mousedown') {
             this._downEl = hoveredTarget;
             this._downPoint = [event.zrX, event.zrY];
             // In case click triggered before mouseup
             this._upEl = hoveredTarget;
+            /***
+            if(typeof this._lastTarget!==undefined){//若选择的图形和上次一样，则不用清除高亮；否则不管选没选中都清除高亮
+                if(hoveredTarget!==this._lastTarget){//recover
+                    this._lastTarget.attr({style:{stroke:'rgb(255,111,11)'}})
+                }
+            }
+            hoveredTarget.attr({style:{stroke:'#bbb'}})  //setStyle
+            **/
+        //    this._lastColor=hoveredTarget.style.fill!=='transparent'?
+
+        //    this._lastTarget=hoveredTarget//
+            /* */
         }
         else if (name === 'mouseup') {
             this._upEl = hoveredTarget;
