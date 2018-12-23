@@ -116,6 +116,8 @@ export {default as Ring} from './graphic/shape/Ring';
 export {default as Rose} from './graphic/shape/Rose';
 export {default as Sector} from './graphic/shape/Sector';
 export {default as Star} from './graphic/shape/Star';
+export {default as DbCircle} from './graphic/shape/DbCircle';
+export {default as House} from './graphic/shape/House';
 export {default as Trochoid} from './graphic/shape/Trochoid';
 
 export {default as LinearGradient} from './graphic/LinearGradient';

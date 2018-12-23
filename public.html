@@ -20,6 +20,8 @@
     <div class='btn' style="color:black;" ><Button onclick=Clear() style="background-image:linear-gradient(#f5c153,#ea920d)">清空</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=ClearShape() style="background-image:linear-gradient(#f5c153,#ea920d)">删除元素</Button></div>
     <div class='btn' ><Button onclick=addImage() style="background-image:linear-gradient(#f5c153,#ea920d)">加入图片</Button></div>
+    <div class='btn' ><Button onclick=addApp() style="background-image:linear-gradient(#f5c153,#ea920d)">苹果</Button></div>
+    <div class='btn' ><Button onclick=addHouse() style="background-image:linear-gradient(#f5c153,#ea920d)">房子</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("canvas")
@@ -132,6 +134,39 @@
         draggable:true
     })
         sr.add(img)
+    }
+    function addApp(){
+        
+        var dbc=new srender.DbCircle({
+        shape:{
+            cx: 300,
+            cy: 300,
+            r: 50,
+        },
+        style: {
+            fill: 'red',
+            // stroke: '#FF6EBE'
+        },
+        draggable:true
+    })
+        sr.add(dbc)
+    }
+    function addHouse(){
+        
+        var house=new srender.House({
+        shape:{
+            cx:500,
+            cy: 300,
+     
+           
+        },
+        style: {
+            fill: 'red',
+            stroke: 'green'
+        },
+        draggable:true
+    })
+        sr.add(house)
     }
     function Clear(){
         sr.remove()
