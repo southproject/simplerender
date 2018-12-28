@@ -36,7 +36,8 @@ var Transformable = function (opts) {
          * @type {Array.<number>}
          * @default 0
          */
-        this.rotation = 0;
+   //     this.rotation = 0;
+        this.rotation = [0,0]
     }
     if (!opts.scale) {
         /**
@@ -62,7 +63,7 @@ transformableProto.transform = null;
  * 如果有坐标变换, 则从position, rotation, scale以及父节点的transform计算出自身的transform矩阵
  */
 transformableProto.needLocalTransform = function () {
-    return isNotAroundZero(this.rotation)
+    return isNotAroundZero(this.rotation[0])//
         || isNotAroundZero(this.position[0])
         || isNotAroundZero(this.position[1])
         || isNotAroundZero(this.scale[0] - 1)
@@ -130,6 +131,7 @@ transformableProto.getLocalTransform = function (m) {
  */
 transformableProto.setTransform = function (ctx) {
     var m = this.transform;
+  //  console.log(m)
     var dpr = ctx.dpr || 1;
     if (m) {
         ctx.setTransform(dpr * m[0], dpr * m[1], dpr * m[2], dpr * m[3], dpr * m[4], dpr * m[5]);
@@ -173,7 +175,8 @@ transformableProto.setLocalTransform = function (m) {
     position[1] = m[5];
     scale[0] = sx;
     scale[1] = sy;
-    this.rotation = Math.atan2(-m[1] / sy, m[0] / sx);
+    this.rotation[0] = Math.atan2(-m[1] / sy, m[0] / sx); //
+    this.rotation[1] = Math.atan2(-m[1] / sy, m[0] / sx);
 };
 /**
  * 分解`transform`矩阵到`position`, `rotation`, `scale`
@@ -270,7 +273,7 @@ Transformable.getLocalTransform = function (target, m) {
 
     var origin = target.origin;
     var scale = target.scale || [1, 1];
-    var rotation = target.rotation || 0;
+    var rotation = target.rotation[0] || 0; //
     var position = target.position || [0, 0];
 
     if (origin) {

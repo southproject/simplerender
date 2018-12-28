@@ -35,7 +35,12 @@ Path.prototype = {
 
     strokeContainThreshold: 5,
 
+    beforeBrush(ctx){
+
+    },
+
     brush: function (ctx, prevEl) {
+      //  console.log("start")
         var style = this.style;
         var path = this.path || pathProxyForDraw;
         var hasStroke = style.hasStroke();
@@ -104,6 +109,9 @@ Path.prototype = {
 
             this.buildPath(path, this.shape, false);
 
+            //shita
+         //   this.attr('scale',this.scale)
+
             // Clear path dirty flag
             if (this.path) {
                 this.__dirtyPath = false;
@@ -113,6 +121,7 @@ Path.prototype = {
             // Replay path building
             ctx.beginPath();
             this.path.rebuildPath(ctx);
+      //      this.attr('scale',this.scale);
         }
 
         if (hasFill) {

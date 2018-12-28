@@ -217,7 +217,9 @@ GraphicStates.prototype = {
                 state.position && vec2Copy(el.position, state.position);
                 state.scale && vec2Copy(el.scale, state.scale);
                 if (state.rotation != null) {
-                    el.rotation = state.rotation;
+                  //  el.rotation = state.rotation;  //
+                    el.rotation[0] = state.rotation[0];
+                    el.rotation[1] = state.rotation[1];
                 }
 
                 // Style

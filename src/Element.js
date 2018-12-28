@@ -123,7 +123,7 @@ Element.prototype = {
      * @protected
      */
     attrKV: function (key, value) {
-        if (key === 'position' || key === 'scale' || key === 'origin') {
+        if (key === 'position' || key === 'scale' || key === 'origin'||key === 'rotation') {//
             // Copy the array
             if (value) {
                 var target = this[key];

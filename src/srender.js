@@ -1,11 +1,5 @@
 /*!
-* ZRender, a high performance 2d drawing library.
-*
-* Copyright (c) 2013, Baidu Inc.
-* All rights reserved.
-*
-* LICENSE
-* https://github.com/ecomfe/zrender/blob/master/LICENSE.txt
+* SRender, a high performance 2d drawing library.
 */
 
 import guid from './core/guid';
@@ -30,7 +24,7 @@ var painterCtors = {
     canvas: Painter
 };
 
-var instances = {};    // ZRender实例map索引
+var instances = {};    // SRender实例map索引
 
 /**
  * @type {string}
@@ -48,7 +42,7 @@ export var version = '4.0.4';
  * @return {module:zrender/ZRender}
  */
 export function init(dom, opts) {
-    var zr = new ZRender(guid(), dom, opts);
+    var zr = new SRender(guid(), dom, opts);
     instances[zr.id] = zr;
     return zr;
 }
@@ -138,11 +132,11 @@ export {parseSVG};
 //********************************************** */
 
 /**
- * @module zrender/ZRender
+ * @module srender/SRender
  */
 /**
  * @constructor
- * @alias module:zrender/ZRender
+ * @alias module:srender/SRender
  * @param {string} id
  * @param {HTMLElement} dom
  * @param {Object} opts
@@ -151,7 +145,7 @@ export {parseSVG};
  * @param {number} [opts.width] Can be 'auto' (the same as null/undefined)
  * @param {number} [opts.height] Can be 'auto' (the same as null/undefined)
  */
-var ZRender = function (id, dom, opts) {
+var SRender = function (id, dom, opts) {
 
     opts = opts || {};
 
@@ -172,7 +166,7 @@ var ZRender = function (id, dom, opts) {
     // TODO WebGL
     if (useVML) {
         if (!painterCtors.vml) {
-            throw new Error('You need to require \'zrender/vml/vml\' to support IE8');
+            throw new Error('You need to require \'srender/vml/vml\' to support IE8');
         }
         rendererType = 'vml';
     }
@@ -221,9 +215,9 @@ var ZRender = function (id, dom, opts) {
     };
 };
 
-ZRender.prototype = {
+SRender.prototype = {
 
-    constructor: ZRender,
+    constructor: SRender,
     /**
      * 获取实例唯一标识
      * @return {string}
@@ -232,9 +226,17 @@ ZRender.prototype = {
         return this.id;
     },
 
+    getObjectList: function () {
+        return this.storage._objectList
+    },
+
+    receiveObjectList: function (list) {
+        this.storage.receivetList(list);
+        this._needsRefresh = true; //?
+    },
     /**
      * 添加元素
-     * @param  {module:zrender/Element} el
+     * @param  {module:srender/Element} el
      */
     add: function (el) {
         this.storage.addRoot(el);
@@ -243,7 +245,7 @@ ZRender.prototype = {
 
     /**
      * 删除元素
-     * @param  {module:zrender/Element} el
+     * @param  {module:srender/Element} el
      */
     remove: function (el) {
         this.storage.delRoot(el);

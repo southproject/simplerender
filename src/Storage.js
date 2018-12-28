@@ -32,6 +32,8 @@ var Storage = function () { // jshint ignore:line
     this._displayList = [];
 
     this._displayListLen = 0;
+
+    this._objectList=[];
 };
 
 Storage.prototype = {
@@ -166,7 +168,12 @@ Storage.prototype = {
         }
 
         this.addToStorage(el);
-        this._roots.push(el);
+        this._roots.push(el);//shita
+        this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
+    },
+    //shita
+    receivetList: function (list) {
+
     },
 
     /**
@@ -185,6 +192,7 @@ Storage.prototype = {
 
             this._roots = [];
             this._displayList = [];
+            this._objectList = [];
             this._displayListLen = 0;
 
             return;
@@ -201,7 +209,8 @@ Storage.prototype = {
         var idx = util.indexOf(this._roots, el);
         if (idx >= 0) {
             this.delFromStorage(el);
-            this._roots.splice(idx, 1);
+            this._roots.splice(idx, 1);//shita
+            this._objectList.splice(idx, 1);
             if (el instanceof Group) {
                 el.delChildrenFromStorage(this);
             }
@@ -228,7 +237,8 @@ Storage.prototype = {
      * 清空并且释放Storage
      */
     dispose: function () {
-        this._renderList =
+        this._renderList = //shita
+        this._objectList = 
         this._roots = null;
     },
 

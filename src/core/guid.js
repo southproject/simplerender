@@ -1,7 +1,5 @@
 /**
- * zrender: 生成唯一id
- *
- * @author errorrik (errorrik@gmail.com)
+ * srender: 生成唯一id
  */
 
 var idStart = 0x0907;

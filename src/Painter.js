@@ -491,6 +491,7 @@ Painter.prototype = {
     _doPaintEl: function (el, currentLayer, forcePaint, scope) {
         var ctx = currentLayer.ctx;
         var m = el.transform;
+    //    console.log(m)
         if (
             (currentLayer.__dirty || forcePaint)
             // Ignore invisible element
