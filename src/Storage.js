@@ -23,7 +23,7 @@ function shapeCompareFunc(a, b) {
 }
 /**
  * 内容仓库 (M)
- * @alias module:zrender/Storage
+ * @alias module:srender/Storage
  * @constructor
  */
 var Storage = function () { // jshint ignore:line
@@ -33,7 +33,7 @@ var Storage = function () { // jshint ignore:line
 
     this._displayListLen = 0;
 
-    this._objectList=[];
+   // this._objectList = objectList;
 };
 
 Storage.prototype = {
@@ -158,7 +158,7 @@ Storage.prototype = {
      * 添加图形(Shape)或者组(Group)到根节点
      * @param {module:zrender/Element} el
      */
-    addRoot: function (el) {
+    addRoot: function (el,others = false) { //是否来自外部改变
         if (el.__storage === this) {
             return;
         }
@@ -169,12 +169,9 @@ Storage.prototype = {
 
         this.addToStorage(el);
         this._roots.push(el);//shita
-        this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
+     //   !others && this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
     },
-    //shita
-    receivetList: function (list) {
-
-    },
+   
 
     /**
      * 删除指定的图形(Shape)或者组(Group)
@@ -192,7 +189,7 @@ Storage.prototype = {
 
             this._roots = [];
             this._displayList = [];
-            this._objectList = [];
+        //    this._objectList = [];
             this._displayListLen = 0;
 
             return;
@@ -210,7 +207,7 @@ Storage.prototype = {
         if (idx >= 0) {
             this.delFromStorage(el);
             this._roots.splice(idx, 1);//shita
-            this._objectList.splice(idx, 1);
+        //    this._objectList.splice(idx, 1);
             if (el instanceof Group) {
                 el.delChildrenFromStorage(this);
             }
@@ -238,7 +235,7 @@ Storage.prototype = {
      */
     dispose: function () {
         this._renderList = //shita
-        this._objectList = 
+     //   this._objectList = 
         this._roots = null;
     },
 

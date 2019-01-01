@@ -5,11 +5,11 @@ import Animatable from './mixin/Animatable';
 import * as zrUtil from './core/util';
 
 /**
- * @alias module:zrender/Element
+ * @alias module:srender/Element
  * @constructor
- * @extends {module:zrender/mixin/Animatable}
- * @extends {module:zrender/mixin/Transformable}
- * @extends {module:zrender/mixin/Eventful}
+ * @extends {module:srender/mixin/Animatable}
+ * @extends {module:srender/mixin/Transformable}
+ * @extends {module:srender/mixin/Eventful}
  */
 var Element = function (opts) { // jshint ignore:line
 

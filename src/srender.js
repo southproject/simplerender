@@ -7,6 +7,7 @@ import env from './core/env';
 import * as zrUtil from './core/util';
 import Handler from './Handler';
 import Storage from './Storage';
+import ObjectList from './ObjectList';
 import Painter from './Painter';
 import Animation from './animation/Animation';
 import HandlerProxy from './dom/HandlerProxy';
@@ -29,7 +30,7 @@ var instances = {};    // SRender实例map索引
 /**
  * @type {string}
  */
-export var version = '4.0.4';
+export var version = '1.0.1';
 
 /**
  * Initializing a zrender instance
@@ -42,9 +43,9 @@ export var version = '4.0.4';
  * @return {module:zrender/ZRender}
  */
 export function init(dom, opts) {
-    var zr = new SRender(guid(), dom, opts);
-    instances[zr.id] = zr;
-    return zr;
+    var sr = new SRender(guid(), dom, opts);
+    instances[sr.id] = sr;
+    return sr;
 }
 
 /**
@@ -161,6 +162,8 @@ var SRender = function (id, dom, opts) {
 
     var self = this;
     var storage = new Storage();
+    var objectList = new ObjectList(storage);
+
 
     var rendererType = opts.renderer;
     // TODO WebGL
@@ -175,6 +178,7 @@ var SRender = function (id, dom, opts) {
     }
     var painter = new painterCtors[rendererType](dom, storage, opts, id);
 
+    this.objectList = objectList //refactoring
     this.storage = storage;
     this.painter = painter;
 
@@ -227,20 +231,23 @@ SRender.prototype = {
     },
 
     getObjectList: function () {
-        return this.storage._objectList
+        return this.objectList._objectList
     },
 
-    receiveObjectList: function (list) {
-        this.storage.receivetList(list);
-        this._needsRefresh = true; //?
+    initWithOthers: function (jsonArray) {
+        this.objectList.init(jsonArray)
+        this._needsRefresh = true;
     },
+
     /**
      * 添加元素
      * @param  {module:srender/Element} el
      */
     add: function (el) {
-        this.storage.addRoot(el);
-        this._needsRefresh = true;
+       // this.storage.addRoot(el);
+       this.objectList.add(el);
+       this._needsRefresh = true;
+       
     },
 
     /**
@@ -248,8 +255,9 @@ SRender.prototype = {
      * @param  {module:srender/Element} el
      */
     remove: function (el) {
-        this.storage.delRoot(el);
-        this._needsRefresh = true;
+       // this.storage.delRoot(el);
+       this.objectList.del(el);
+       this._needsRefresh = true;
     },
 
     /**
@@ -483,7 +491,8 @@ SRender.prototype = {
      * Clear all objects and the canvas.
      */
     clear: function () {
-        this.storage.delRoot();
+       // this.storage.delRoot();
+        this.objectList.del()
         this.painter.clear();
     },
 

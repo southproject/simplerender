@@ -10,8 +10,8 @@ var abs = Math.abs;
 
 var pathProxyForDraw = new PathProxy(true);
 /**
- * @alias module:zrender/graphic/Path
- * @extends module:zrender/graphic/Displayable
+ * @alias module:srender/graphic/Path
+ * @extends module:srender/graphic/Displayable
  * @constructor
  * @param {Object} opts
  */
@@ -19,7 +19,7 @@ function Path(opts) {
     Displayable.call(this, opts);
 
     /**
-     * @type {module:zrender/core/PathProxy}
+     * @type {module:srender/core/PathProxy}
      * @readOnly
      */
     this.path = null;
