@@ -6,7 +6,7 @@ import guid from './util/core/guid';
 import env from './util/core/env';
 import * as zrUtil from './util/core/util';
 import Handler from './Handler/Handler';
-import Storage from './ObjectBase/Storage';
+import Storage from './Render/Storage';
 import ObjectList from './ObjectBase/ObjectList';
 import Painter from './Render/Painter';
 import Animation from './Render/animation/Animation';
