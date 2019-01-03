@@ -24,11 +24,11 @@
     <div class='btn' ><Button onclick=restore() style="background-image:linear-gradient(#f5c153,#ea920d)">恢复</Button></div>
     <!--div class='btn' ><Button onclick=addApp() style="background-image:linear-gradient(#f5c153,#ea920d)">苹果</Button></div-->
     <div class='btn' ><Button onclick=edit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑</Button></div>
-    <!--div class='btn' ><Button  style="background-image:linear-gradient(#f5c153,#ea920d)">解析服务器数据</Button></div-->
+    <div class='btn' ><Button onclick=otherEdit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑键值对</Button></div>
     <script src="./dist/srender.js"></script>
     <script src="./objectList/1.json"></script>
     <script type="text/javascript">
-    console.log(fileData[0])
+    
     var dom=document.getElementById("canvas")
     var elementStyle = {
         stroke: '#ccc',
@@ -66,7 +66,8 @@
     var sr = srender.init(dom)
     var w = sr.getWidth();
     var h = sr.getHeight();
-    sr.initWithOthers(fileData)
+    ajax()
+ //   sr.initWithOthers(fileData)
     //
    // var img = new srender.Image({style:{image:"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"}})
    // sr.add(img)
@@ -88,6 +89,12 @@
 
 })
   // nowShape.rotation = qua
+    }
+    function otherEdit(){
+        sr.objectList.attr({
+            id:2312,
+            position:[700,500],
+        })
     }
     function Clear(){
         console.log("从数组中删除元素:")
@@ -130,9 +137,7 @@
        // console.log(sr.storage.getDisplayList(true))
       console.log(sr.getObjectList())
     }
-    function remove(){
-
-    }
+    
     function ClearShape(){
       //  lastRoots=sr.storage._roots
      //   lastList=sr.storage.getDisplayList(true)
@@ -192,6 +197,21 @@
          })
         sr.add(house)
     }
+    function get(text){
+      //  var obj = JSON.parse(text);
+      var obj = text.data
+      sr.initWithOthers(obj)
+    }
+    function ajax(){
+        var script = document.createElement("script");
+        script.src = "objectList/mes.json?cb=get";
+        document.body.insertBefore(script,document.body.firstChild)
+    }
+    function write(){
+
+    }
+     
+     setInterval("ajax()",5000);
     </script>
 </body>
 
