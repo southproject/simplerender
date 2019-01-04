@@ -93,7 +93,7 @@ Element.prototype = {
         }
         m[4] += dx;
         m[5] += dy;
-
+        console.log(dx,dy)
         this.decomposeTransform();
         this.dirty(false);
     },
@@ -172,7 +172,7 @@ Element.prototype = {
         }
 
         this.dirty(false);
-
+        console.log(key,value)
         return this;
     },
 
