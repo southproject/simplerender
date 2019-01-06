@@ -212,6 +212,14 @@ Displayable.prototype = {
 
         this.__zr && this.__zr.refresh();
     },
+    /**
+     * 将图形的更新信息传递到外部
+     */
+    pipe: function (msg){
+        this.__zr && this.__zr.pipe(msg);
+    },
+
+
 
     /**
      * 图形是否会触发事件

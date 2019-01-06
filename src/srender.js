@@ -156,6 +156,16 @@ var SRender = function (id, dom, opts) {
     this.dom = dom;
 
     /**
+     *  @type {Object}
+     */
+    this.msgToServe = {};
+
+    /**
+     * @type {Function}
+     */
+    this.pipeCb = null;
+
+    /**
      * @type {string}
      */
     this.id = id;
@@ -240,6 +250,13 @@ SRender.prototype = {
     },
 
     /**
+     * @param {Function} 向服务器发送msg的函数
+     */
+
+    initWithCb: function(cb) {
+        this.pipeCb = cb
+    },
+    /**
      * 添加元素
      * @param  {module:srender/Element} el
      */
@@ -305,6 +322,14 @@ SRender.prototype = {
         //     log.innerHTML = log.innerHTML + '<br>' + (end - start);
         // }
     },
+
+    /**
+     * post message out
+     */
+    pipe: function (msg){
+        this.pipeCb(msg) ;
+    },
+
 
     /**
      * Mark and repaint the canvas in the next frame of browser

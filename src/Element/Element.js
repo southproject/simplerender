@@ -93,7 +93,7 @@ Element.prototype = {
         }
         m[4] += dx;
         m[5] += dy;
-        console.log(dx,dy)
+        this.pipe({dx,dy})  //是否要为主动和被动的位移分别设置函数
         this.decomposeTransform();
         this.dirty(false);
     },

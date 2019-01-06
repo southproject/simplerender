@@ -207,10 +207,10 @@
         script.src = "objectList/mes.json?cb=get";
         document.body.insertBefore(script,document.body.firstChild)
     }
-    function write(){
-
+    function toServe(msg){
+        console.log("??"+JSON.stringify(msg))
     }
-     
+    sr.initWithCb(toServe)
      setInterval("ajax()",5000);
     </script>
 </body>
