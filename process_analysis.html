@@ -208,7 +208,8 @@
         document.body.insertBefore(script,document.body.firstChild)
     }
     function toServe(msg){
-        console.log("??"+JSON.stringify(msg))
+   //    var tag = JSON.stringify(msg)
+       console.log(msg)
     }
     sr.initWithCb(toServe)
      setInterval("ajax()",5000);
