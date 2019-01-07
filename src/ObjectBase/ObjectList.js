@@ -111,16 +111,16 @@ ObjectList.prototype={
         else{
             switch (tag){
                 case 'position':  
-                    obj.attr(position,el.position);
+                    obj.attr('position',el.position);
                     break;
                 case 'style':  
-                    obj.attr(style,el.style);
+                    obj.attr('style',el.style);
                     break;
                 case 'rotation':  
-                    obj.attr(rotation,el.rotation);
+                    obj.attr('rotation',el.rotation);
                     break;
                 case 'scale':  
-                    obj.attr(scale,el.scale);
+                    obj.attr('scale',el.scale);
                     break;  
             }
         }
