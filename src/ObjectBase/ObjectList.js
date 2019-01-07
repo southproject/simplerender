@@ -36,12 +36,11 @@ ObjectList.prototype={
             el.pipe({type:"add",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
         }
         else{
-             // console.log("键值对")
+             console.log("键值对")
              
              //el为7个键值对 {id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}
             let type = el.type.charAt(0).toUpperCase()+el.type.slice(1) 
-            console.log(el.type)
-            console.log(el.position)
+            
             let obj = new Cst[type]({
                 id:el.id,
                 style:el.style,
