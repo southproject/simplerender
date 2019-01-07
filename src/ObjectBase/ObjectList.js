@@ -107,19 +107,22 @@ ObjectList.prototype={
                 break
             }
         }
-        switch (tag){
-            case 'position':  
-                obj.attr(position,el.position);
-                break;
-            case 'style':  
-                obj.attr(style,el.style);
-                break;
-            case 'rotation':  
-                obj.attr(rotation,el.rotation);
-                break;
-            case 'scale':  
-                obj.attr(scale,el.scale);
-                break;  
+        if(!obj){console.log("id不正确")}
+        else{
+            switch (tag){
+                case 'position':  
+                    obj.attr(position,el.position);
+                    break;
+                case 'style':  
+                    obj.attr(style,el.style);
+                    break;
+                case 'rotation':  
+                    obj.attr(rotation,el.rotation);
+                    break;
+                case 'scale':  
+                    obj.attr(scale,el.scale);
+                    break;  
+            }
         }
         /*
         obj.attr({                                //此处协同编辑时改为分情况调用较好，传过来的值包含操作类型tag

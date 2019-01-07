@@ -95,7 +95,7 @@ Element.prototype = {
         m[5] += dy;
         this.pipe({type:"attr",
             tag:"position",
-            el:{position:[ m[4],m[5]]}   
+            el:{id:el.id,position:[ m[4],m[5]]}
         })  //是否要为主动和被动的位移分别设置函数
         this.decomposeTransform();
         this.dirty(false);

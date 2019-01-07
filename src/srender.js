@@ -276,6 +276,12 @@ SRender.prototype = {
        this.objectList.del(el);
        this._needsRefresh = true;
     },
+    /**
+     * 改变属性，仅限服务端数据改变
+     */
+    attr: function(el,tag){
+        this.objectList.attr(el,tag);
+    },
 
     /**
      * Change configuration of layer
