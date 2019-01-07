@@ -21,7 +21,7 @@ var Element = function (opts) { // jshint ignore:line
      * 画布元素ID
      * @type {string}
      */
-    this.id = opts.id || guid();
+    this.id = opts.id && guid();  // ||
 };
 
 Element.prototype = {

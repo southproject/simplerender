@@ -1,4 +1,4 @@
-
+import guid from '../util/core/guid';
 import * as Cst from '../util/export'; //constructor of shape
 import Element from '../Element/Element'
 import * as util from '../util/core/util'
@@ -37,7 +37,8 @@ ObjectList.prototype={
         }
         else{
              console.log("键值对")
-             
+             //假定id值递增，就算恢复以前的图形也生成新的id，这样避免遍历查找
+             if(el.id>guid(save)){
              //el为7个键值对 {id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}
             let type = el.type.charAt(0).toUpperCase()+el.type.slice(1) 
             
@@ -53,6 +54,7 @@ ObjectList.prototype={
             })
             this._objectList.push(el)
             this.storage.addRoot(obj);
+        }
         }
         
     
