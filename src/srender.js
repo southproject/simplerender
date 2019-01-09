@@ -279,8 +279,9 @@ SRender.prototype = {
     /**
      * 改变属性，仅限服务端数据改变
      */
-    attr: function(el,tag){
-        this.objectList.attr(el,tag);
+    attr: function(el,tag,isObserver){
+        let mode = isObserver || false;
+        this.objectList.attr(el,tag,mode);
     },
 
     /**
@@ -333,9 +334,12 @@ SRender.prototype = {
      * post message out
      */
     pipe: function (msg){
-        this.pipeCb(msg) ;
+        this.pipeCb && this.pipeCb(msg) ;
     },
-
+    /**
+     * lock the el when edit it
+     */
+    
 
     /**
      * Mark and repaint the canvas in the next frame of browser
