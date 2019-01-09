@@ -42,8 +42,9 @@ export var version = '1.0.1';
  * @param {number|string} [opts.height] Can be 'auto' (the same as null/undefined)
  * @return {module:zrender/ZRender}
  */
-export function init(dom, opts) {
-    var sr = new SRender(guid(), dom, opts);
+export function init(dom, opts, singleMode) {
+    var mode =  singleMode || true;
+    var sr = new SRender(guid(), dom, opts, mode);
     instances[sr.id] = sr;
     return sr;
 }
@@ -146,7 +147,7 @@ export {parseSVG};
  * @param {number} [opts.width] Can be 'auto' (the same as null/undefined)
  * @param {number} [opts.height] Can be 'auto' (the same as null/undefined)
  */
-var SRender = function (id, dom, opts) {
+var SRender = function (id, dom, opts, mode) {
 
     opts = opts || {};
 
@@ -172,7 +173,7 @@ var SRender = function (id, dom, opts) {
 
     var self = this;
     var storage = new Storage();
-    var objectList = new ObjectList(storage);
+    var objectList = new ObjectList(storage,mode);
 
 
     var rendererType = opts.renderer;

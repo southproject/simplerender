@@ -9,7 +9,7 @@ import * as util from '../util/core/util'
  */
 var ObjectList = function (storage,singleMode) { 
 
-    this.singleMode = singleMode || false;
+    this.singleMode = singleMode || true;
 
     this.storage = storage;
 
