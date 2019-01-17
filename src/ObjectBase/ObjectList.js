@@ -146,6 +146,7 @@ ObjectList.prototype={
         if(override){
             this.del()
           //  this.add(array)
+            guid('recover')
             array.forEach(function(el){this.add(el)},this);
         }
         else{
