@@ -51,12 +51,12 @@ ObjectList.prototype={
                 shape:el.shape,
                 
                 scale:el.scale,
-               rotation:el.rotation,z
+               rotation:el.rotation,
          //   origin:data.origin
             })
             this._objectList.push(el)
             this.storage.addRoot(obj);
-      //  }
+     //   }
         }
         
     
