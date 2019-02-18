@@ -7,11 +7,13 @@ import * as util from '../util/core/util'
  * @alias module:srender/ObjectList
  * @constructor
  */
-var ObjectList = function (storage,singleMode) { 
+var ObjectList = function (storage,painter,collaMode) { 
 
-    this.singleMode = singleMode || true;
+    this.collaMode = collaMode ||false;
 
     this.storage = storage;
+
+    this.painter = painter;
 
     this._objectListLen = 0;
 
@@ -35,7 +37,7 @@ ObjectList.prototype={
             this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
             this.storage.addRoot(el);
             //如果是协作模式，应该向服务器传递增加的信息
-            !this.singleMode&&el.pipe({type:"add",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+            this.collaMode&&el.pipe({type:"add",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
         }
         else{
              console.log("键值对")
@@ -88,7 +90,7 @@ ObjectList.prototype={
             var idx = util.indexOf(this._objectList, el.id);
             this._objectList.splice(idx, 1);
             //如果是协作模式，应该向服务器传递增加的信息
-            el.pipe({type:"delete",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+            this.collaMode&&el.pipe({type:"delete",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
             this.storage.delRoot(el)
             
         }
@@ -147,7 +149,13 @@ ObjectList.prototype={
             this.del()
           //  this.add(array)
             guid('recover')
-            array.forEach(function(el){this.add(el)},this);
+            if(array){
+                array.forEach(function(el){this.add(el)},this);
+            }
+            else{
+                this.painter.clear()
+            }
+           
         }
         else{
 
