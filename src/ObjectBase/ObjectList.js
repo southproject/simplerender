@@ -1,6 +1,7 @@
 import guid from '../util/core/guid';
 import * as Cst from '../util/export'; //constructor of shape
 import Element from '../Element/Element'
+import Group from '../Render/container/Group'
 import * as util from '../util/core/util'
 /**
  * 接受外部对队列的直接改变 (M)
@@ -32,7 +33,7 @@ ObjectList.prototype={
     },
 
     add: function(el) {
-        if(el instanceof Element){
+        if(el instanceof Element || el instanceof Group){
            
             this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
             this.storage.addRoot(el);
@@ -86,7 +87,7 @@ ObjectList.prototype={
             }
             return;
         }
-        if (el instanceof Element){
+        if (el instanceof Element || el instanceof Group){
             var idx = util.indexOf(this._objectList, el.id);
             this._objectList.splice(idx, 1);
             //如果是协作模式，应该向服务器传递增加的信息

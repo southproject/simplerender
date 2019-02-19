@@ -442,6 +442,13 @@ SRender.prototype = {
     },
 
     /**
+     * Get choosen object(s)
+     */
+    getNowShape: function() {
+        return this.handler._select.parent||this.handler._select;
+    },
+
+    /**
      * Get container width
      */
     getWidth: function() {

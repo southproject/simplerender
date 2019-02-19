@@ -55,8 +55,8 @@ Storage.prototype = {
      * @param {boolean} [update=false] 是否在返回前更新该数组
      * @param {boolean} [includeIgnore=false] 是否包含 ignore 的数组, 在 update 为 true 的时候有效
      *
-     * 详见{@link module:zrender/graphic/Displayable.prototype.updateDisplayList}
-     * @return {Array.<module:zrender/graphic/Displayable>}
+     * 详见{@link module:srender/graphic/Displayable.prototype.updateDisplayList}
+     * @return {Array.<module:srender/graphic/Displayable>}
      */
     getDisplayList: function (update, includeIgnore) {
         includeIgnore = includeIgnore || false;

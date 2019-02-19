@@ -22,6 +22,9 @@
     <div class='btn' ><Button onclick=addImage() style="background-image:linear-gradient(#f5c153,#ea920d)">加入图片</Button></div>
     <div class='btn' ><Button onclick=addApp() style="background-image:linear-gradient(#f5c153,#ea920d)">苹果</Button></div>
     <div class='btn' ><Button onclick=addHouse() style="background-image:linear-gradient(#f5c153,#ea920d)">房子</Button></div>
+    <div class='btn' ><Button onclick=getNowShape() style="background-image:linear-gradient(#f5c153,#ea920d)">当前元素</Button></div>
+    <div class='btn' ><Button onclick=getRoots() style="background-image:linear-gradient(#f5c153,#ea920d)">root数组</Button></div>
+    <div class='btn' ><Button onclick=getDisplayList() style="background-image:linear-gradient(#f5c153,#ea920d)">displayList数组</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("canvas")
@@ -107,6 +110,16 @@
     rect1.on('click',function(){
         console.log(rect1.position)
     })
+    function getNowShape(){
+       console.log(!sr.getNowShape()?sr.getNowShape():sr.getNowShape())
+    }
+    function getRoots(){
+        console.log(sr.storage._roots)
+    }
+    
+    function getDisplayList(){
+        console.log(sr.storage.getDisplayList())
+    }
     function addNew(){
         var c=new srender.Circle({
         shape:{
@@ -174,7 +187,7 @@
         sr.remove()
     }
     function ClearShape(){
-        sr.remove(select)
+        sr.getNowShape()&&sr.remove(sr.getNowShape())
     }
     //*************************************************Container
     var rect=null
