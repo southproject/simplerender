@@ -219,8 +219,6 @@ Storage.prototype = {
         if (el) {
             el.__storage = this;
 
-            console.log(el._zr)
-
             el.dirty(false);
         }
         return this;

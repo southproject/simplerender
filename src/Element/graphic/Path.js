@@ -273,7 +273,7 @@ Path.prototype = {
 
         this.__dirty = this.__dirtyText = true;
 
-     //   console.log(this.__zr)
+      //  console.log(this.__zr)
 
         this.__zr && this.__zr.refresh();
 

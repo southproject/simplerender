@@ -236,6 +236,7 @@ var SRender = function (id, dom, opts, mode) {
     storage.addToStorage = function (el) {
 
         el && el.addSelfToZr(self);
+
         oldAddToStorage.call(storage, el);
 
       // el && el.addSelfToZr(self);
@@ -302,14 +303,14 @@ SRender.prototype = {
      */
     undo: function(){
         this.stack.undo();
-        this._needsRefresh = true;
+    //    this._needsRefresh = true;
     },
     /**
      * 回溯
      */
     redo: function(){
         this.stack.redo();
-        this._needsRefresh = true;
+    //    this._needsRefresh = true;
     },
 
     /**
