@@ -25,6 +25,8 @@
     <div class='btn' ><Button onclick=getNowShape() style="background-image:linear-gradient(#f5c153,#ea920d)">当前元素</Button></div>
     <div class='btn' ><Button onclick=getRoots() style="background-image:linear-gradient(#f5c153,#ea920d)">root数组</Button></div>
     <div class='btn' ><Button onclick=getDisplayList() style="background-image:linear-gradient(#f5c153,#ea920d)">displayList数组</Button></div>
+    <div class='btn' ><Button onclick=undo() style="background-image:linear-gradient(#f5c153,#ea920d)">撤销</Button></div>
+    <div class='btn' ><Button onclick=redo() style="background-image:linear-gradient(#f5c153,#ea920d)">回溯</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("canvas")
@@ -116,7 +118,12 @@
     function getRoots(){
         console.log(sr.storage._roots)
     }
-    
+    function undo(){
+        sr.undo()
+    }
+    function redo(){
+        sr.redo()
+    }
     function getDisplayList(){
         console.log(sr.storage.getDisplayList())
     }

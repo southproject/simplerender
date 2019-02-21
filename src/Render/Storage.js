@@ -159,10 +159,11 @@ Storage.prototype = {
      * @param {module:zrender/Element} el
      */
     addRoot: function (el,others = false) { //是否来自外部改变
+        
         if (el.__storage === this) {
             return;
         }
-
+        
         if (el instanceof Group) {
             el.addChildrenToStorage(this);
         }
@@ -217,6 +218,9 @@ Storage.prototype = {
     addToStorage: function (el) {
         if (el) {
             el.__storage = this;
+
+            console.log(el._zr)
+
             el.dirty(false);
         }
         return this;
@@ -225,6 +229,7 @@ Storage.prototype = {
     delFromStorage: function (el) {
         if (el) {
             el.__storage = null;
+            el.dirty(false);
         }
 
         return this;
