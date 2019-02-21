@@ -15,20 +15,20 @@ Stack.prototype = {
 
     constructor: Stack,
 
-    exec:function(target){
+    exec:function(action){
 
-        switch(target.type){
+        switch(action.type){
             
             case 'add':
             
               
-               this.storage.delRoot(target.object)
+               this.storage.delRoot(action.object)
                break;
                         
             case 'del':
 
               
-               this.storage.addRoot(target.object)
+               this.storage.addRoot(action.object)
                break;
             
             case 'transform':
@@ -42,25 +42,25 @@ Stack.prototype = {
     redo:function(){
        
 
-        let target = this._redoList.pop();
+        let action = this._redoList.pop();
 
-        if(target){
+        if(action){
 
-            this.exec(target)
+            this.exec(action)
             
-            switch(target.type){
+            switch(action.type){
                 case "add":
-                   // target.type = "del";
-                   target.setType("del")
+                   // action.type = "del";
+                   action.setType("del")
                     break;
                 case "del":
-                    //target.type = "add";
-                    target.setType("add")
+                    //action.type = "add";
+                    action.setType("add")
                     break;
                         
             }
             
-            this._undoList.push(target);
+            this._undoList.push(action);
 
         }
 
@@ -68,29 +68,33 @@ Stack.prototype = {
 
     undo:function(){
 
-        let target = this._undoList.pop();
+        let action = this._undoList.pop();
 
-        if(target){
-            this.exec(target)
+        if(action){
+            this.exec(action)
             
-            switch(target.type){
+            switch(action.type){
                 case "add":
                   
-                  target.setType("del")
+                  action.setType("del")
                     break;
                 case "del":
-                 target.setType("add")
+                 action.setType("add")
                     break;
             }
             
-            this._redoList.push(target);
+            this._redoList.push(action);
             
         } 
     },
 
-    add:function(el){
+    add:function(action){
 
-        this._undoList.push(el)
+        this._undoList.push(action)
+
+        this._redoList = [] //意味着如果有操作，则无法向后
+
+      //  action.object.pipe({})
 
         console.log(this._undoList)
     },

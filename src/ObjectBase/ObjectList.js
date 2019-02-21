@@ -104,8 +104,7 @@ ObjectList.prototype={
             //如果是协作模式，应该向服务器传递增加的信息
             this.collaMode&&el.pipe({type:"delete",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
             this.storage.delRoot(el)
-            
-            let action = new Action("del",el)
+              let action = new Action("add",el)
             
             this.stack.add(action)
         }
