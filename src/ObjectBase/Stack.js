@@ -39,7 +39,7 @@ Stack.prototype = {
 
     },
 
-    redo:function(){
+    redo:function(triggered = false){
        
 
         let action = this._redoList.pop();
@@ -62,11 +62,13 @@ Stack.prototype = {
             
             this._undoList.push(action);
 
+            !triggered && action.object.pipe({type:"stack",tag:"redo"})
+
         }
 
     },
 
-    undo:function(){
+    undo:function(triggered = false){
 
         let action = this._undoList.pop();
 
@@ -84,24 +86,19 @@ Stack.prototype = {
             }
             
             this._redoList.push(action);
+
+            !triggered && action.object.pipe({type:"stack",tag:"undo"})
             
         } 
     },
 
-    add:function(action){
+    add:function(action,triggered = false){
 
         this._undoList.push(action)
 
         this._redoList = [] //意味着如果有操作，则无法向后
 
-      //  action.object.pipe({})
-
-        console.log(this._undoList)
-    },
-
-    del:function(el){
-
-        
+        !triggered && action.object.pipe({type:"stack",tag:"interrupt"})
 
     },
 
