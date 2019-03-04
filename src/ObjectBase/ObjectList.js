@@ -1,19 +1,29 @@
 import guid from '../util/core/guid';
 import * as Cst from '../util/export'; //constructor of shape
 import Element from '../Element/Element'
+import Group from '../Render/container/Group'
 import * as util from '../util/core/util'
+import Action from '../Element/Action'
 /**
  * 接受外部对队列的直接改变 (M)
  * @alias module:srender/ObjectList
  * @constructor
  */
-var ObjectList = function (storage) { 
+var ObjectList = function (storage,painter,stack,collaMode) { 
+
+    this.collaMode = collaMode ||false;
 
     this.storage = storage;
+
+    this.painter = painter;
+
+    this.stack = stack;
 
     this._objectListLen = 0;
 
     this._objectList=[];
+
+   
 };
 
 ObjectList.prototype={
@@ -28,17 +38,22 @@ ObjectList.prototype={
     },
 
     add: function(el) {
-        if(el instanceof Element){
+        if(el instanceof Element || el instanceof Group){
            
             this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
+
             this.storage.addRoot(el);
+
+            let action = new Action("add",el)
+            
+            this.stack.add(action)
             //如果是协作模式，应该向服务器传递增加的信息
-            el.pipe({type:"add",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+            this.collaMode&&el.pipe({type:"add",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
         }
         else{
              console.log("键值对")
              //假定id值递增，就算恢复以前的图形也生成新的id，这样避免遍历查找
-             if(el.id>guid(save)){
+           //  if(el.id>=guid('save')){
              //el为7个键值对 {id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}
             let type = el.type.charAt(0).toUpperCase()+el.type.slice(1) 
             
@@ -53,8 +68,9 @@ ObjectList.prototype={
          //   origin:data.origin
             })
             this._objectList.push(el)
+
             this.storage.addRoot(obj);
-        }
+     //   }
         }
         
     
@@ -82,13 +98,15 @@ ObjectList.prototype={
             }
             return;
         }
-        if (el instanceof Element){
+        if (el instanceof Element || el instanceof Group){
             var idx = util.indexOf(this._objectList, el.id);
             this._objectList.splice(idx, 1);
             //如果是协作模式，应该向服务器传递增加的信息
-            el.pipe({type:"delete",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+            this.collaMode&&el.pipe({type:"delete",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
             this.storage.delRoot(el)
+              let action = new Action("add",el)
             
+            this.stack.add(action)
         }
         else{
             var idx = util.indexOf(this._objectList, el);//键值对的删除需要注意下是否正确，待调试
@@ -100,7 +118,7 @@ ObjectList.prototype={
         
     },
 
-    attr: function(el,tag) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
+    attr: function(el,tag,mode) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
         var array = this.storage._roots;
         var obj;
         for (var i = 0, len = array.length; i < len; i++) {  //方案2
@@ -114,6 +132,10 @@ ObjectList.prototype={
             switch (tag){
                 case 'position':  
                     obj.attr('position',el.position);
+                    break;
+                case 'shape':
+                    console.log(el.shape)
+                    obj.attr('shape',el.shape,mode);
                     break;
                 case 'style':  
                     obj.attr('style',el.style);
@@ -140,7 +162,14 @@ ObjectList.prototype={
         if(override){
             this.del()
           //  this.add(array)
-            array.forEach(function(el){this.add(el)},this);
+            guid('recover')
+            if(array){
+                array.forEach(function(el){this.add(el)},this);
+            }
+            else{
+                this.painter.clear()
+            }
+           
         }
         else{
 

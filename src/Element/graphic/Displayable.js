@@ -11,9 +11,9 @@ import Element from '../Element';
 import RectText from './mixin/RectText';
 
 /**
- * @alias module:zrender/graphic/Displayable
- * @extends module:zrender/Element
- * @extends module:zrender/graphic/mixin/RectText
+ * @alias module:srender/graphic/Displayable
+ * @extends module:srender/Element
+ * @extends module:srender/graphic/mixin/RectText
  */
 function Displayable(opts) {
 
@@ -25,7 +25,7 @@ function Displayable(opts) {
     for (var name in opts) {
         if (
             opts.hasOwnProperty(name) &&
-            name !== 'style'
+            name !== 'style' && name !== 'id'
         ) {
             this[name] = opts[name];
         }
@@ -244,9 +244,9 @@ Displayable.prototype = {
         return this.animate('style', loop);
     },
 
-    attrKV: function (key, value) {
+    attrKV: function (key, value, mode) {
         if (key !== 'style') {
-            Element.prototype.attrKV.call(this, key, value);
+            Element.prototype.attrKV.call(this, key, value, mode);
         }
         else {
             this.style.set(value);

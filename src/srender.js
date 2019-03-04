@@ -1,5 +1,5 @@
 /*!
-* SRender, a high performance 2d drawing library.
+* SRender, a 2d drawing library.
 */
 
 import guid from './util/core/guid';
@@ -11,6 +11,7 @@ import ObjectList from './ObjectBase/ObjectList';
 import Painter from './Render/Painter';
 import Animation from './Render/animation/Animation';
 import HandlerProxy from './Handler/dom/HandlerProxy';
+import Stack from "./ObjectBase/Stack"
 
 //import * as zrUtil from './core/util';
 import * as matrix from './util/core/matrix';
@@ -33,17 +34,18 @@ var instances = {};    // SRender实例map索引
 export var version = '1.0.1';
 
 /**
- * Initializing a zrender instance
+ * Initializing a srender instance
  * @param {HTMLElement} dom
  * @param {Object} opts
  * @param {string} [opts.renderer='canvas'] 'canvas' or 'svg'
  * @param {number} [opts.devicePixelRatio]
  * @param {number|string} [opts.width] Can be 'auto' (the same as null/undefined)
  * @param {number|string} [opts.height] Can be 'auto' (the same as null/undefined)
- * @return {module:zrender/ZRender}
+ * @return {module:srender/SRender}
  */
-export function init(dom, opts) {
-    var sr = new SRender(guid(), dom, opts);
+export function init(dom, opts, collaMode) {
+    var mode =  collaMode || false;
+    var sr = new SRender(guid(), dom, opts, mode);
     instances[sr.id] = sr;
     return sr;
 }
@@ -146,7 +148,7 @@ export {parseSVG};
  * @param {number} [opts.width] Can be 'auto' (the same as null/undefined)
  * @param {number} [opts.height] Can be 'auto' (the same as null/undefined)
  */
-var SRender = function (id, dom, opts) {
+var SRender = function (id, dom, opts, mode) {
 
     opts = opts || {};
 
@@ -170,10 +172,13 @@ var SRender = function (id, dom, opts) {
      */
     this.id = id;
 
-    var self = this;
-    var storage = new Storage();
-    var objectList = new ObjectList(storage);
+    this.mode = mode;
 
+    var self = this;
+
+    var storage = new Storage();
+    
+    var stack = new Stack(storage);
 
     var rendererType = opts.renderer;
     // TODO WebGL
@@ -188,9 +193,15 @@ var SRender = function (id, dom, opts) {
     }
     var painter = new painterCtors[rendererType](dom, storage, opts, id);
 
+    var objectList = new ObjectList(storage,painter,stack,mode);
+
     this.objectList = objectList //refactoring
+
     this.storage = storage;
+
     this.painter = painter;
+
+    this.stack = stack;
 
     var handerProxy = (!env.node && !env.worker) ? new HandlerProxy(painter.getViewportRoot()) : null;
     this.handler = new Handler(storage, painter, handerProxy, painter.root);
@@ -223,9 +234,12 @@ var SRender = function (id, dom, opts) {
     };
 
     storage.addToStorage = function (el) {
+
+        el && el.addSelfToZr(self);
+
         oldAddToStorage.call(storage, el);
 
-        el.addSelfToZr(self);
+      // el && el.addSelfToZr(self);
     };
 };
 
@@ -266,6 +280,10 @@ SRender.prototype = {
        this._needsRefresh = true;
        
     },
+    getSelect(){
+        console.log("select",this.handler._select)
+        console.log("preSelect",this.handler._preSelect)
+    },
 
     /**
      * 删除元素
@@ -279,8 +297,24 @@ SRender.prototype = {
     /**
      * 改变属性，仅限服务端数据改变
      */
-    attr: function(el,tag){
-        this.objectList.attr(el,tag);
+    attr: function(el,tag,isObserver){
+        let mode = isObserver || false;
+        this.objectList.attr(el,tag,mode);
+    },
+
+    /**
+     * 撤销功能
+     */
+    undo: function(){
+        this.stack.undo();
+    //    this._needsRefresh = true;
+    },
+    /**
+     * 回溯
+     */
+    redo: function(){
+        this.stack.redo();
+    //    this._needsRefresh = true;
     },
 
     /**
@@ -333,9 +367,12 @@ SRender.prototype = {
      * post message out
      */
     pipe: function (msg){
-        this.pipeCb(msg) ;
+        this.pipeCb && this.pipeCb(msg) ;
     },
-
+    /**
+     * lock the el when edit it
+     */
+    
 
     /**
      * Mark and repaint the canvas in the next frame of browser
@@ -430,6 +467,13 @@ SRender.prototype = {
      */
     clearAnimation: function () {
         this.animation.clear();
+    },
+
+    /**
+     * Get choosen object(s)
+     */
+    getNowShape: function() {
+        return this.handler._select.parent||this.handler._select;
     },
 
     /**
