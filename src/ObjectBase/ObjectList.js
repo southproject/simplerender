@@ -186,8 +186,12 @@ ObjectList.prototype={
           //  this.add(array)
             guid('recover')
             if(array){
-                array.forEach(function(el){this.add(el)},this);
+                if(array instanceof Array){
+                    array.forEach(function(el){this.add(el)},this);
+                }
+                else this.add(array);
             }
+               
             else{
                 this.painter.clear()
             }
