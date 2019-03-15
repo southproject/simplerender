@@ -32,6 +32,10 @@ Stack.prototype = {
                break;
             
             case 'transform':
+                console.log(action.act)
+                action.object.attr("position",[action.act[4],action.act[5]])
+                action.act = [...action.object.transform];//记录回溯前的坐标，以待redo使用
+              break;
 
             case 'style':
             
@@ -45,6 +49,7 @@ Stack.prototype = {
         let action = this._redoList.pop();
 
         if(action){
+            
 
             this.exec(action)
             
@@ -57,6 +62,7 @@ Stack.prototype = {
                     //action.type = "add";
                     action.setType("add")
                     break;
+               
                         
             }
             
@@ -73,6 +79,8 @@ Stack.prototype = {
         let action = this._undoList.pop();
 
         if(action){
+        
+
             this.exec(action)
             
             switch(action.type){
@@ -81,8 +89,9 @@ Stack.prototype = {
                   action.setType("del")
                     break;
                 case "del":
-                 action.setType("add")
+                    action.setType("add")
                     break;
+            
             }
             
             this._redoList.push(action);

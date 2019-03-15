@@ -25,6 +25,8 @@
     <div class='btn' style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">drawer</Button></div>
     <div class='btn' ><Button onclick=edit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑</Button></div>
     <div class='btn' ><Button onclick=otherEdit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑键值对</Button></div>
+    <div class='btn red'><Button class= "red" onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">改变颜色</Button></div>
+    <div class='btn red'><Button onclick=getNowShape() style="background-image:linear-gradient(#f5c153,#ea920d)">选中</Button></div>
     <script src="./dist/srender.js"></script>
     <script src="./objectList/1.json"></script>
     <script type="text/javascript">
@@ -64,13 +66,13 @@
     ]
     var handlerNames={}
     var sr = srender.init(dom)
+   
     var w = sr.getWidth();
     var h = sr.getHeight();
-    ajax()
+  //  ajax()
  //   sr.initWithOthers(fileData)
     //
-   // var img = new srender.Image({style:{image:"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"}})
-   // sr.add(img)
+    
     var select
     var i=0
     var nowShape
@@ -89,6 +91,11 @@
 
 })
   // nowShape.rotation = qua
+    }
+    function getNowShape(){
+        
+     //  console.log(!sr.getNowShape()?sr.getNowShape():sr.getNowShape())
+       nowShape = sr.getNowShape()
     }
     function otherEdit(){
         sr.objectList.attr({
@@ -231,6 +238,10 @@
         })
         sr.add(rect)
     }
+    function changeColor(){
+        nowShape = sr.getNowShape()
+        nowShape?sr.changeColor(nowShape,"red"):console.log("shibai")
+    }
     function addTriangle(){
         var tri=new srender.Isogon({
         shape:{
@@ -275,8 +286,23 @@
       
        console.log(msg)
     }
-    sr.initWithCb(toServe)
+ //   sr.initWithCb(toServe)/
     // setInterval("ajax()",5000);
+    
+   var img = new srender.Image({style:
+    {image:"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+    height:200,
+    width:200,
+
+},
+  
+    
+}
+    )
+ //   console.log(img)
+  //  sr.addHover(img)
+  //  img.attr("position",[500,200])
+    console.log(sr.storage._roots)
     </script>
 </body>
 

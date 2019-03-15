@@ -74,6 +74,7 @@ var Handler = function(storage, painter, proxy, painterRoot) {
 
     this._select = null;
 
+    this._preSelect = null;
     /**
      * @private
      * @type {Date}
