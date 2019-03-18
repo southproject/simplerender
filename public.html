@@ -13,7 +13,7 @@
 <body>
    
     
-    <div id="canvas" style="width:1418px;height:904px;border:1px dashed" ></div>
+    <div id="suibian" style="width:1418px;height:904px;border:1px dashed" ></div>
     <div class='btn' style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">addCircle</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">drawer</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=Container() style="background-image:linear-gradient(#f5c153,#ea920d)">bounding</Button></div>
@@ -29,7 +29,7 @@
     <div class='btn' ><Button onclick=redo() style="background-image:linear-gradient(#f5c153,#ea920d)">回溯</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
-    var dom=document.getElementById("canvas")
+    var dom=document.getElementById("suibian")
     var elementStyle = {
         stroke: '#ccc',
         fill: 'white',
@@ -325,6 +325,24 @@
             draggable:true
         });
         sr.add(smoothLine);
+    var text = new srender.Text({
+       
+        style:{
+            x:500,
+         //
+            y:500,
+        //    _x:100,
+        //    _y:100,
+            text: 'srender',
+            textAlign: 'center',
+            textVerticalAlign: 'middle',
+            fontSize: 200,
+            fontFamily: 'Lato',
+            fontWeight: 'bolder',
+            textFill: '#0ff',
+            blend: 'lighten'
+        }})
+    sr.add(text)
      //   console.log(sr.handler._$handlers['mousedown'])
      //   console.log(sr.handler.proxy._$handlers)
         console.log(srender.Circle)

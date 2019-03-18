@@ -198,6 +198,8 @@ Displayable.prototype = {
     rectContain: function (x, y) {
         var coord = this.transformCoordToLocal(x, y);
         var rect = this.getBoundingRect();
+     //   console.log(x,y)
+     //   console.log(rect)
         return rect.contain(coord[0], coord[1]);
     },
 
