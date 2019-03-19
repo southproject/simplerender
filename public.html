@@ -27,6 +27,7 @@
     <div class='btn' ><Button onclick=getDisplayList() style="background-image:linear-gradient(#f5c153,#ea920d)">displayList数组</Button></div>
     <div class='btn' ><Button onclick=undo() style="background-image:linear-gradient(#f5c153,#ea920d)">撤销</Button></div>
     <div class='btn' ><Button onclick=redo() style="background-image:linear-gradient(#f5c153,#ea920d)">回溯</Button></div>
+    <div class='btn' ><Button onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">yanse</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("suibian")
@@ -126,6 +127,10 @@
     }
     function getDisplayList(){
         console.log(sr.storage.getDisplayList())
+    }
+    function changeColor(){
+        nowShape = sr.getNowShape()
+        nowShape?sr.changeFillColor(nowShape,"red"):console.log("shibai")
     }
     function addNew(){
         var c=new srender.Circle({

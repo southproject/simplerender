@@ -4,6 +4,7 @@ import Element from '../Element/Element'
 import Group from '../Render/container/Group'
 import * as util from '../util/core/util'
 import Action from '../Element/Action'
+import Style from '../Element/graphic/Style';
 /**
  * 接受外部对队列的直接改变 (M)
  * @alias module:srender/ObjectList
@@ -37,7 +38,7 @@ ObjectList.prototype={
         }
     },
 
-    add: function(el) {
+    add: function(el,needStack = true) {
 
         let El = null;
 
@@ -77,8 +78,8 @@ ObjectList.prototype={
             this.storage.addRoot(obj);
      //   }
         }
-        let action = new Action("add",El)
-        this.stack.add(action)
+        let action = new Action("add",El);
+        needStack&&this.stack.add(action);
         
     },
 
@@ -137,8 +138,8 @@ ObjectList.prototype={
         
     },
 
-    attr: function(el,tag,mode) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
-        var array = this.storage._roots;
+    attr: function(el,tag,mode,style) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
+        var array = this.storage._roots; //多余的信息放入style
         var obj;
         for (var i = 0, len = array.length; i < len; i++) {  //方案2
             if(el.id == array[i].id){                          //如果objectList一直为引用
@@ -157,7 +158,12 @@ ObjectList.prototype={
                     obj.attr('shape',el.shape,mode);
                     break;
                 case 'style':  
-                    obj.attr('style',el.style);
+                  
+                    var _preStyle = {}//只有style属性不含函数
+                    util.extend(_preStyle,util.extend1(obj.style,style))
+                    let action = new Action("style",obj,_preStyle)
+                    this.stack.add(action)
+                    obj.attr('style',style);//
                     break;
                 case 'rotation':  
                     obj.attr('rotation',el.rotation);

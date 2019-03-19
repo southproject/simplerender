@@ -36,6 +36,8 @@ function Displayable(opts) {
      */
     this.style = new Style(opts.style, this);
 
+    
+
     this._rect = null;
     // Shapes for cascade clipping.
     this.__clipPaths = [];
