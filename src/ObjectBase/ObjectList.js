@@ -147,8 +147,8 @@ ObjectList.prototype={
                 break
             }
         }
-        if(!obj){console.log("id不正确")}
-        else{
+        if(!obj){console.log("id不正确:",el.id,array)}//这里稍微有点问题，_roots中代表group的有自己的id，解决办法一是靠传递键值对时传递父元素信息
+        else{                                          //另一种是靠displayList判断
             switch (tag){
                 case 'position':  
                     obj.attr('position',el.position);
