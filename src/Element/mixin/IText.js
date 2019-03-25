@@ -17,8 +17,11 @@ IText.prototype = {
         if(this._hasItext) return 
 
         var chooseTarget = e.target;
-        console.log("bounding:",chooseTarget.getBoundingRect())
+        // chooseTarget.getBoundingRect().applyTransform(chooseTarget.transform)
+         console.log("bounding:",chooseTarget&&chooseTarget.getVisionBoundingRect())
+      //  chooseTarget&&chooseTarget.getBoundingRect().applyTransform(chooseTarget.transform)
         console.log("事件坐标:",e.offsetX,e.offsetY)
+        /*
         if(chooseTarget&&chooseTarget.type === 'text'){
            
             console.log("dom:",chooseTarget.__zr.painter)
@@ -36,6 +39,7 @@ IText.prototype = {
             this._hasItext = true;
 
         }
+        */
     }
 
 }

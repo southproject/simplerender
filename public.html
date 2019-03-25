@@ -45,7 +45,7 @@
     var select
   //  var nowShape
     //
-    var group = new srender.Group();
+   /*  var group = new srender.Group();
     for (var i = 0; i < 3; ++i) {
         var r = 50 * Math.random() + 20;
         var circle = new srender.Circle({
@@ -58,12 +58,66 @@
                 (w * 0.6 - r * 2) * Math.random() + r + w * 0.2,
                 (h * 0.6 - r * 2) * Math.random() + r + h * 0.2
             ],
-            style: elementStyle,
+            style: {
+            "fill": "rgb(180, 180, 0)"
+            },
+           
             draggable: true
+        }).on("mousemove",function(){
+            var gg = group.getBoundingRect()
+            console.log(gg)
         })
         group.add(circle);
     }
-    sr.add(group)
+  
+    sr.add(group) */
+  /*****************/
+    var circle = new srender.Circle({ id:'100', scale : [1, 1], shape : { cx : 0, cy : 0, r : 100 } });
+    var circle2 = new srender.Circle({
+        id:'200',
+        scale : [1, 1],
+        shape : {
+            cx : 200,
+            cy : 0,
+            r : 100
+        },
+        "style": {
+            "fill": "rgb(0, 180, 0)"
+        }
+    });
+
+    circle.draggable =false;
+    circle2.draggable =false;
+
+    var deltPostion =null;
+    var Draggroup =null;
+
+    var g1 = new srender.Group({
+        position: [100, 100]
+    });
+    g1.add(circle);
+    g1.add(circle2);
+
+    sr.on('mouseup', function(e){
+        console.log('mouseup');
+        Draggroup=null;
+    });
+
+    g1.on('mousedown', function(e) {
+        Draggroup =g1;
+        deltPostion =[e.event.zrX-Draggroup.position[0],e.event.zrY-Draggroup.position[1]];
+    });
+
+    sr.on('mousemove', function(e){
+        if(Draggroup !=null){
+            var new_pos =[e.event.zrX,e.event.zrY];
+            Draggroup.position=[new_pos[0]-deltPostion[0],new_pos[1]-deltPostion[1]];
+            Draggroup.dirty();
+        }
+    });
+
+    sr.add(g1);
+  /*  *************/
     var flag=false
     function ar(){
         if(flag){sr.add(sun2);flag=false }
@@ -229,6 +283,7 @@
         lineDash: [5, 5, 10, 10],
     },
     })
+    rect.draggable = true;
     }
     function container2(e){
         if(!isContain) return
@@ -254,6 +309,7 @@
         sr.on('mousedown',container1)
         sr.on('mousemove',container2)
         sr.on('mouseup',container3)
+       
     }
     //*****************************************************
    //******************************************************penDrawer
@@ -322,7 +378,7 @@
             points.push([Math.random() * 300 + 100, Math.random() * 300 + 100]);
         }
    var smoothLine = new srender.Polyline({
-            position: [10, 10],
+            position: [100, 100],
             style : {
                 lineDash: [5, 5, 10, 10],
                 stroke: 'rgba(220, 20, 60, 0.8)',
@@ -336,7 +392,7 @@
         });
         sr.add(smoothLine);
     var text = new srender.Text({
-       
+       draggable:true,
         style:{
             x:500,
          //
@@ -356,6 +412,27 @@
      //   console.log(sr.handler._$handlers['mousedown'])
      //   console.log(sr.handler.proxy._$handlers)
         console.log(srender.Circle)
+    sr.on("dblclick",rectBound)
+    function rectBound(){
+        console.log(smoothLine)
+        var textRect = smoothLine.getBoundingRect();
+        var boundingRect = new srender.Rect({
+        shape: {
+            cx: 0,
+            cy: 0,
+            x: textRect.x,
+            y: textRect.y,
+            width: textRect.width,
+            height: textRect.height
+        },
+        style: {
+            fill: 'none',
+            stroke: '#14f1ff'
+        }
+        });
+        sr.add(boundingRect);
+    }
+    
     </script>
 </body>
 
