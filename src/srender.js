@@ -148,7 +148,7 @@ export {parseSVG};
  * @param {number} [opts.width] Can be 'auto' (the same as null/undefined)
  * @param {number} [opts.height] Can be 'auto' (the same as null/undefined)
  */
-var SRender = function (id, dom, opts, mode) {
+var SRender = function (id, dom, opts, mode, user) {
 
     opts = opts || {};
 
@@ -193,7 +193,7 @@ var SRender = function (id, dom, opts, mode) {
     }
     var painter = new painterCtors[rendererType](dom, storage, opts, id);
 
-    var objectList = new ObjectList(storage,painter,stack,mode);
+    var objectList = new ObjectList(storage,painter,stack,mode,user);
 
     this.objectList = objectList //refactoring
 

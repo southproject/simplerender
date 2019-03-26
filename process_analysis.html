@@ -27,6 +27,7 @@
     <div class='btn' ><Button onclick=otherEdit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑键值对</Button></div>
     <div class='btn red'><Button class= "red" onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">改变颜色</Button></div>
     <div class='btn red'><Button onclick=getNowShape() style="background-image:linear-gradient(#f5c153,#ea920d)">选中</Button></div>
+    <div class='btn red'><Button onclick=loadImage() style="background-image:linear-gradient(#f5c153,#ea920d)">图片</Button></div>
     <script src="./dist/srender.js"></script>
     <script src="./objectList/1.json"></script>
     <script type="text/javascript">
@@ -291,11 +292,15 @@
     
    var img = new srender.Image(
 {style:
-    {image:"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
-    height:200,
-    width:200,},
+    {image:"http://seopic.699pic.com/photo/50025/1819.jpg_wh1200.jpg",//"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+    //height:200,
+   // width:200,
+},
 }
     )
+    function loadImage(){
+        sr.add(img)
+    }
  //   console.log(img)
   //  sr.addHover(img)
   //  img.attr("position",[500,200])

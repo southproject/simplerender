@@ -274,8 +274,8 @@ Path.prototype = {
             // Return rect with stroke
             return rectWithStroke;
         }
-        rect.applyTransform(transform);
-        return rect;
+        $rect.applyTransform(transform);
+        return $rect;
     },
 
     contain: function (x, y) {

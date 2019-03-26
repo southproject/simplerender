@@ -1,7 +1,8 @@
 function IText(){ //Interactive Text
     
     this.on('dblclick',this.displayInput,this)
-
+  //  this.on('mousemove',this.occupy,this)
+  //  this.on('mouseup',this.free,this)
     this._hasItext = false;
         
 }
@@ -40,6 +41,32 @@ IText.prototype = {
 
         }
         */
+    },
+
+    occupy: function(e){
+        var draggingTarget = e.target;
+
+        if (draggingTarget) { 
+            if(!draggingTarget._occupied){
+                draggingTarget._occupied = true;
+                var username = draggingTarget.__zr.objectList.user;
+                draggingTarget.attr("style",{  text:username,
+                textPosition:[200,140],
+                textFill: '#0ff',
+                fontSize: 30,
+                fontFamily: 'Lato',
+                fontWeight: 'bolder',})  
+            }//这个操作不入栈
+          //  draggingTarget.__zr.objectList.addBoundingRect(draggingTarget.getVisionBoundingRect())
+        }
+    },
+    free: function(e){
+        var draggingTarget = e.target;
+        if (draggingTarget){
+            draggingTarget._occupied = false;
+            var username = draggingTarget.__zr.objectList.user;
+            draggingTarget.attr("style",{text:null})
+        }
     }
 
 }

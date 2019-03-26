@@ -126,12 +126,17 @@
     
     for (var i = 0; i < 3; ++i) {
         var r = 50 * Math.random() + 20;
-        var circle = new srender.Circle({
+        let circle = new srender.Circle({
+            draggable:true,
             shape: {
                 cx:(w * 0.6 - r * 2) * Math.random() + r + w * 0.2,
                 cy:(h * 0.6 - r * 2) * Math.random() + r + h * 0.2,
                 r: r
             },
+            style: {
+            // fill: 'black',
+         //   stroke: 'black'
+        },
     
         })
        
@@ -139,6 +144,7 @@
     }
     
     var sun3=new srender.Circle({
+        draggable:true,
         shape:{
             cx:70,
             cy: 90,
@@ -151,6 +157,7 @@
     })
     sr.add(sun3)
     var rect1=new srender.Rect({
+        draggable:true,
         shape:{
        
         r: 2,
@@ -268,6 +275,7 @@
         isContain=true;
         start =[e.event.zrX,e.event.zrY];
         rect=new srender.Rect({
+            draggable:true,
             shape:{
             r: 2,
             x: start[0],
@@ -276,7 +284,6 @@
             height: 0
     },
    // position:[100,100],
-  //  draggable:true,
       style: {
         stroke: '#ccc',
         fill: 'none',
@@ -436,7 +443,7 @@
             stroke: '#14f1ff'
         }
         });
-        sr.add(boundingRect);
+        sr.addHover(boundingRect);
     }
     
     </script>
