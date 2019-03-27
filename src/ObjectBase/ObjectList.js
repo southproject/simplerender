@@ -73,13 +73,16 @@ ObjectList.prototype={
             El = el;
 
             this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
-            if(el.type === "image"){
-               //缓冲处理？
-            }
+           
             this.storage.addRoot(el);//stack操作
 
             //如果是协作模式，应该向服务器传递增加的信息
+            if(el.type === "file"){
+                this.collaMode&&el.pipe({type:"add",el:{id:el.id,type:el.type,totalTime:"02:11:54",frameRate:{rate:29.97,height:1080,width:1440,},shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+            }
+            else{
             this.collaMode&&el.pipe({type:"add",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+            }
         }
         else{
              console.log("键值对")
@@ -89,7 +92,19 @@ ObjectList.prototype={
             let type = el.type.charAt(0).toUpperCase()+el.type.slice(1) 
 
             this._objectList.push(el)
-
+            if(type === "File"){
+                let obj = new Cst.House({
+                    id:el.id,
+                    style:el.style,
+                    position:el.position,
+                    shape:el.shape,
+                    
+                    scale:el.scale,
+                   rotation:el.rotation,
+             //   origin:data.origin
+                })
+            }
+            else{
             let obj = new Cst[type]({
                 id:el.id,
                 style:el.style,
@@ -100,7 +115,7 @@ ObjectList.prototype={
                rotation:el.rotation,
          //   origin:data.origin
             })
-
+        }
             El = obj;
 
             this.storage.addRoot(obj);
@@ -166,7 +181,7 @@ ObjectList.prototype={
         
     },
 
-    attr: function(el,tag,mode,style) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
+    attr: function(el,tag,mode,style,forUser=false) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
         var array = this.storage._roots; //多余的信息放入style
         var obj;
         for (var i = 0, len = array.length; i < len; i++) {  //方案2
@@ -186,12 +201,17 @@ ObjectList.prototype={
                     obj.attr('shape',el.shape,mode);
                     break;
                 case 'style':  
-                  
-                    var _preStyle = {}//只有style属性不含函数
-                    util.extend(_preStyle,util.extend1(obj.style,style))
-                    let action = new Action("style",obj,_preStyle)
-                    this.stack.add(action)
-                    obj.attr('style',style);//
+                    if(forUser) {
+                        obj.attr('style',style,false);//
+                    }
+                    else{
+                        var _preStyle = {}//只有style属性不含函数
+                        util.extend(_preStyle,util.extend1(obj.style,style))
+                        let action = new Action("style",obj,_preStyle)
+                        this.stack.add(action)
+                        obj.attr('style',style);//
+                    }
+                    
                     break;
                 case 'rotation':  
                     obj.attr('rotation',el.rotation);
