@@ -1,7 +1,7 @@
 function IText(){ //Interactive Text
     
     this.on('dblclick',this.displayInput,this)
-  //  this.on('mousemove',this.occupy,this)
+    this.on('mousedown',this.noFocus,this)
   //  this.on('mouseup',this.free,this)
     this._hasItext = false;
         
@@ -67,7 +67,16 @@ IText.prototype = {
             var username = draggingTarget.__zr.objectList.user;
             draggingTarget.attr("style",{text:null})
         }
+    },
+    noFocus: function(e){
+        if(this._hasItext){
+            var downTarget = e.target;
+            if(downTarget){
+
+            }
+        }
     }
+
 
 }
 
