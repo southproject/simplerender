@@ -1,7 +1,7 @@
 function IText(){ //Interactive Text
     
     this.on('dblclick',this.displayInput,this)
-    this.on('mousedown',this.noFocus,this)
+    this.on('mousedown',this.delayWrap,this)//setTimeout(this.noFocus,300)
   //  this.on('mouseup',this.free,this)
     this._Itexting = false;//means there is going a itext
     this._itext = null;
@@ -43,6 +43,7 @@ IText.prototype = {
                 this._itext.defaultValue = textTarget.style.text
               //  itext.appendChild(defaultText);
                 this._itext.style.position = "absolute"
+              //  this._itext.style.display = "none"
                 parent.appendChild(this._itext)
                 this._itext.focus();
                 this._itext.addEventListener("keyup",()=>this.upText())
@@ -80,13 +81,19 @@ IText.prototype = {
             draggingTarget.attr("style",{text:null})
         }
     },
+    delayWrap: function(e){
+      //  setTimeout(this.noFocus.bind(this,e),300)
+      setTimeout(()=>this.noFocus(e),300)
+    },
     noFocus: function(e){
+        console.log(e)
         if(this._Itexting){
             var downTarget = e.target;
             if(downTarget!==this.textTarget){
                 this._itext.removeEventListener("keyup",()=>this.upText())
                 this._Itexting = false;
             }
+            else  this._itext.focus();
         }
     }
 
