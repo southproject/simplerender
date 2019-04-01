@@ -1,8 +1,7 @@
 function IText(){ //Interactive Text
     
     this.on('dblclick',this.displayInput,this)
-    this.on('mousedown',this.delayWrap,this)//setTimeout(this.noFocus,300)
-  //  this.on('mouseup',this.free,this)
+    this.on('mousedown',this.delayWrap,this)//supposed 
     this._Itexting = false;//means there is going a itext
     this._itext = null;
     this._itextId = null;
@@ -15,10 +14,10 @@ IText.prototype = {
 
     constructor: IText,
 
-    upText: function(e,target){
+    updateText: function(e,target){
         this.textTarget.attr("style",{text:this._itext.value})
     },
-    displayInput: function(e){  //定位可编辑文本框
+    displayInput: function(e){  //display textarea to get keyboard input
 
         if(this._Itexting&&this.textTarget===e.target) return 
 
@@ -29,13 +28,13 @@ IText.prototype = {
          //   console.log("dom:",textTarget.__zr.painter)
          console.log("bounding:",textTarget&&textTarget.getVisionBoundingRect())
          
-          //  var location = textTarget.getBoundingRect()
+       
             var parent = textTarget.__zr.painter.root
             var itext = this._itext;
              if(itext) {//just addEventListener again
                 this._itext.value = textTarget.style.text
                 this._itext.focus();
-                this._itext.addEventListener("keyup",()=>this.upText());
+                this._itext.addEventListener("keyup",()=>this.updateText());
              }
              else{
                 this._itext=document.createElement("textarea");
@@ -47,7 +46,7 @@ IText.prototype = {
                 parent.appendChild(this._itext);
           
                 this._itext.focus();
-                this._itext.addEventListener("keyup",()=>this.upText())
+                this._itext.addEventListener("keyup",()=>this.updateText())
              }
             
            
@@ -87,11 +86,10 @@ IText.prototype = {
       setTimeout(()=>this.noFocus(e),300)
     },
     noFocus: function(e){
-        console.log(e)
         if(this._Itexting){
             var downTarget = e.target;
             if(downTarget!==this.textTarget){
-                this._itext.removeEventListener("keyup",()=>this.upText())
+                this._itext.removeEventListener("keyup",()=>this.updateText())
                 this._Itexting = false;
             }
             else  this._itext.focus();
