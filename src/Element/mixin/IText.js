@@ -35,16 +35,17 @@ IText.prototype = {
              if(itext) {//just addEventListener again
                 this._itext.value = textTarget.style.text
                 this._itext.focus();
-                this._itext.addEventListener("keyup",()=>this.upText())
+                this._itext.addEventListener("keyup",()=>this.upText());
              }
-
              else{
                 this._itext=document.createElement("textarea");
-                this._itext.defaultValue = textTarget.style.text
-              //  itext.appendChild(defaultText);
-                this._itext.style.position = "absolute"
-              //  this._itext.style.display = "none"
-                parent.appendChild(this._itext)
+                this._itext.defaultValue = textTarget.style.text;
+                  this._itext.style.position = "absolute";
+                  this._itext.style.top = "-999px";
+                  this._itext.style.zIndex = -99;
+            
+                parent.appendChild(this._itext);
+          
                 this._itext.focus();
                 this._itext.addEventListener("keyup",()=>this.upText())
              }
