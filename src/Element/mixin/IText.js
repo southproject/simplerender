@@ -9,13 +9,11 @@ function IText(){ //Interactive Text
 }
 
 IText.prototype = {
-
     
-
     constructor: IText,
 
     updateText: function(e,target){
-        this.textTarget.attr("style",{text:this._itext.value})
+        this.textTarget.attr("style",{text:this._itext.value},true);
     },
     displayInput: function(e){  //display textarea to get keyboard input
 

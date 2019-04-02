@@ -21,7 +21,6 @@ Text.prototype = {
 
     brush: function (ctx, prevEl) {
         var style = this.style;
-
         // Optimize, avoid normalize every time.
         this.__dirty && textHelper.normalizeTextStyle(style, true);
 
@@ -45,8 +44,15 @@ Text.prototype = {
         this.setTransform(ctx);
 
         textHelper.renderText(this, ctx, text, style, null, prevEl);
+       
+        if (style.textOfText&&style.textOfText!=="") {
+            this.restoreTransform(ctx);
+            this.drawRectTtext(ctx, this.getBoundingRect());
+        }
 
         this.restoreTransform(ctx);
+      
+        
     },
 
     getBoundingRect: function () {
