@@ -313,7 +313,6 @@
     function Container(){
        // if(lockFlag)
        rect&&sr.remove(rect)
-        
         sr.on('mousedown',container1)
         sr.on('mousemove',container2)
         sr.on('mouseup',container3)
@@ -366,11 +365,13 @@
             }
             //console.log(sr.handler._$handlers['mousedown'])
    function Pen(){
+        sr.disableDrag(false)
        if(lockFlag){
            lockFlag=false;
            sr.off('mousedown',pen1);
             sr.off('mousemove',pen2);
             sr.off('mouseup',pen3);
+            sr.disableDrag(true)
             return;
         }
       

@@ -24,9 +24,10 @@ Draggable.prototype = {
     _dragStart: function (e) {
         
         var draggingTarget = e.target;
+        
     //    console.log("drag"+e.target)
       //  if (draggingTarget && draggingTarget.draggable) {
-        if (draggingTarget) {
+        if (draggingTarget&&this._globalDrag) {
           //  draggingTarget.attr({style:{stroke:'#bbb'}})
             this._draggingTarget = draggingTarget;
             draggingTarget.dragging = true;
@@ -34,7 +35,8 @@ Draggable.prototype = {
             this._preX = this._x = e.offsetX;
             this._preY = this._y = e.offsetY;
             /**** */
-            if(!draggingTarget._occupied){
+             
+            if(!draggingTarget._occupied&&draggingTarget.__zr.mode){
                 draggingTarget._occupied = true;
                 var username = draggingTarget.__zr.objectList.user;
                 var rect = draggingTarget.getVisionBoundingRect&&draggingTarget.getVisionBoundingRect();
@@ -105,15 +107,19 @@ Draggable.prototype = {
             draggingTarget.__zr.objectList.stack.add(new Action("transform",draggingTarget,draggingTarget._preTransform))
             draggingTarget.saveTransform = true; //mouseup意味能够记录新的坐标
             draggingTarget.dragging = false;
-            draggingTarget._occupied = false;
-            var username = draggingTarget.__zr.objectList.user;
-            if(draggingTarget.type !== 'text'){
-                draggingTarget.attr("style",{text:"", textFill: 'transparent',fontSize:1,},true);
-           //   draggingTarget.__zr.objectList.attr( draggingTarget,"style",true,{text:null})
+            
+            if(draggingTarget.__zr.mode){
+                draggingTarget._occupied = false;
+                var username = draggingTarget.__zr.objectList.user;
+                if(draggingTarget.type !== 'text'){
+                    draggingTarget.attr("style",{text:"", textFill: 'transparent',fontSize:1,},true);
+               //   draggingTarget.__zr.objectList.attr( draggingTarget,"style",true,{text:null})
+                }
+                else{
+                    draggingTarget.attr("style",{textOfText:""},true);
+                }
             }
-            else{
-                draggingTarget.attr("style",{textOfText:""},true);
-            }
+           
         }
 
         this.dispatchToElement(param(draggingTarget, e), 'dragend', e.event);

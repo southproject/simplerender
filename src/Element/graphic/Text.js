@@ -4,8 +4,8 @@ import * as textContain from '../../Render/contain/text';
 import * as textHelper from './helper/text';
 
 /**
- * @alias zrender/graphic/Text
- * @extends module:zrender/graphic/Displayable
+ * @alias srender/graphic/Text
+ * @extends module:srender/graphic/Displayable
  * @constructor
  * @param {Object} opts
  */
