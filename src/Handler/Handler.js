@@ -371,5 +371,6 @@ util.mixin(Handler, Eventful);
 util.mixin(Handler, Draggable);
 util.mixin(Handler, Click);
 util.mixin(Handler, IText);
+util.mixin(Handler, BlockClear);
 
 export default Handler;
