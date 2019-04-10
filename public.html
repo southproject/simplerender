@@ -157,6 +157,14 @@
         },
     })
     sr.add(sun3)
+    sun3.animate('shape', true)
+        .when(5000, {
+            cx: w - r
+        })
+        .when(10000, {
+            cx: r
+        })
+        .start();
     var rect1=new srender.Rect({
         draggable:true,
         shape:{
