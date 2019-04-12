@@ -189,14 +189,14 @@ ObjectList.prototype={
                     break;
                 case 'style':  
                     if(forUser) {
-                        obj.attr('style',style,false);//
+                        obj.attr('style',style,false,false,true);//指text-style
                     }
                     else{
                         var _preStyle = {}//只有style属性不含函数
                         util.extend(_preStyle,util.extend1(obj.style,style))
                         let action = new Action("style",obj,_preStyle)
                         this.stack.add(action)
-                        obj.attr('style',style,true);//
+                        obj.attr('style',style,mode);//
                     }
                     
                     break;
