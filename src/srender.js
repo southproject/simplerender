@@ -94,7 +94,7 @@ function delInstance(id) {
 export {default as Group} from './Render/container/Group';
 export {default as Path} from './Element/graphic/Path';
 export {default as Image} from './Element/graphic/Image';
-export {default as Image} from './Element/graphic/Video';
+export {default as Video} from './Element/graphic/Video';
 export {default as CompoundPath} from './Element/graphic/CompoundPath';
 export {default as Text} from './Element/graphic/Text';
 export {default as IncrementalDisplayable} from './Element/graphic/IncrementalDisplayable';
