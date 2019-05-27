@@ -286,6 +286,10 @@ SRender.prototype = {
        this._needsRefresh = true;
        
     },
+    getSelect(){
+        console.log("select",this.handler._select)
+        console.log("preSelect",this.handler._preSelect)
+    },
 
     /**
      * 删除元素

@@ -1,3 +1,3 @@
 # simplerender
 
-a little change from zrender for collaborator
+use public.html and process_analysis.html to test and develop srenderlib
