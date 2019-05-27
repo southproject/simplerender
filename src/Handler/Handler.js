@@ -2,6 +2,8 @@ import * as util from '../util/core/util';
 import * as vec2 from '../util/core/vector';
 import Draggable from '../Element/mixin/Draggable';
 import Click from '../Element/mixin/Click';
+import IText from '../Element/mixin/IText';
+import BlockClear from '../Element/mixin/BlockClear';
 import Eventful from '../Element/mixin/Eventful';
 import * as eventTool from '../util/core/event';
 
@@ -73,8 +75,10 @@ var Handler = function(storage, painter, proxy, painterRoot) {
     this._hovered = {};
 
     this._select = null;
+
     this._preSelect = null;
 
+    this._globalDrag = true;//Promise all element draggable
     /**
      * @private
      * @type {Date}
@@ -97,6 +101,10 @@ var Handler = function(storage, painter, proxy, painterRoot) {
     Draggable.call(this);
 
     Click.call(this);
+
+    IText.call(this);
+
+    BlockClear.call(this);
 
     this.setHandlerProxy(proxy);
 };
@@ -222,7 +230,7 @@ Handler.prototype = {
      * @param {string} eventName 事件名称
      * @param {Object} event 事件对象
      */
-    dispatchToElement: function (targetInfo, eventName, event) {
+    dispatchToElement: function (targetInfo, eventName, event) {//targetInfo，坐标或者元素
         targetInfo = targetInfo || {};
         var el = targetInfo.target;
         if (el && el.silent) {
@@ -245,7 +253,7 @@ Handler.prototype = {
         }
 
         if (!eventPacket.cancelBubble) {
-            // 冒泡到顶级 zrender 对象
+            // 冒泡到顶级 srender 对象
             this.trigger(eventName, eventPacket);  //handler实例，这时候自然在Handler的_$handlers中查找事件，即通过Handler.on(注册的)
             // 分发事件到用户自定义层
             // 用户有可能在全局 click 事件中 dispose，所以需要判断下 painter 是否存在
@@ -286,7 +294,6 @@ Handler.prototype = {
                 }
             }
         }
-
         return out;
     }
 };
@@ -297,7 +304,7 @@ util.each(['click', 'mousedown', 'mouseup', 'mousewheel', 'dblclick', 'contextme
         // Find hover again to avoid click event is dispatched manually. Or click is triggered without mouseover
         var hovered = this.findHover(event.zrX, event.zrY);   //储存在proxy._$handlers中的this
         var hoveredTarget = hovered.target;
-        
+     //   console.log(hovered)
         if (name === 'mousedown') {
             this._downEl = hoveredTarget;
             this._downPoint = [event.zrX, event.zrY];
@@ -363,5 +370,8 @@ function isHover(displayable, x, y) {
 util.mixin(Handler, Eventful);
 util.mixin(Handler, Draggable);
 util.mixin(Handler, Click);
+util.mixin(Handler, IText);
+util.mixin(Handler, BlockClear);
+
 
 export default Handler;

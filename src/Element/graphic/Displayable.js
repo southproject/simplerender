@@ -36,6 +36,8 @@ function Displayable(opts) {
      */
     this.style = new Style(opts.style, this);
 
+    
+
     this._rect = null;
     // Shapes for cascade clipping.
     this.__clipPaths = [];
@@ -198,6 +200,8 @@ Displayable.prototype = {
     rectContain: function (x, y) {
         var coord = this.transformCoordToLocal(x, y);
         var rect = this.getBoundingRect();
+     //   console.log(x,y)
+     //   console.log(rect)
         return rect.contain(coord[0], coord[1]);
     },
 
@@ -244,12 +248,16 @@ Displayable.prototype = {
         return this.animate('style', loop);
     },
 
-    attrKV: function (key, value, mode) {
+    attrKV: function (key, value, mode=false,stack=true,isUserText=false) {
         if (key !== 'style') {
-            Element.prototype.attrKV.call(this, key, value, mode);
+            Element.prototype.attrKV.call(this, key, value, mode,stack);
         }
         else {
-            this.style.set(value);
+            this.style.set(value);//if style change was text,using another tag to avoid stack
+            if(mode){
+                isUserText?this.pipe({type:"attr",tag:"style-text",el:{id:this.id,style:value}}):this.pipe({type:"attr",tag:"style",el:{id:this.id,style:value}});
+            }
+           // mode && isUserText?this.pipe({type:"attr",tag:"style-text",el:{id:this.id,style:value}}):this.pipe({type:"attr",tag:"style",el:{id:this.id,style:value}});
         }
     },
 
@@ -258,7 +266,7 @@ Displayable.prototype = {
      * @param {*} value
      */
     setStyle: function (key, value) {
-        this.style.set(key, value);
+        this.style.set(key, value);//或许应该把stack操作和判断放入set中
         this.dirty(false);
         return this;
     },

@@ -22,9 +22,12 @@
     <div class='btn' style="color:black;" ><Button onclick=ClearShape() style="background-image:linear-gradient(#f5c153,#ea920d)">清空画布</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=Clear() style="background-image:linear-gradient(#f5c153,#ea920d)">删除元素</Button></div>
     <div class='btn' ><Button onclick=restore() style="background-image:linear-gradient(#f5c153,#ea920d)">恢复</Button></div>
-    <!--div class='btn' ><Button onclick=addApp() style="background-image:linear-gradient(#f5c153,#ea920d)">苹果</Button></div-->
+    <div class='btn' style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">drawer</Button></div>
     <div class='btn' ><Button onclick=edit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑</Button></div>
     <div class='btn' ><Button onclick=otherEdit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑键值对</Button></div>
+    <div class='btn red'><Button class= "red" onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">改变颜色</Button></div>
+    <div class='btn red'><Button onclick=getNowShape() style="background-image:linear-gradient(#f5c153,#ea920d)">选中</Button></div>
+    <div class='btn red'><Button onclick=loadImage() style="background-image:linear-gradient(#f5c153,#ea920d)">图片</Button></div>
     <script src="./dist/srender.js"></script>
     <script src="./objectList/1.json"></script>
     <script type="text/javascript">
@@ -64,13 +67,13 @@
     ]
     var handlerNames={}
     var sr = srender.init(dom)
+   
     var w = sr.getWidth();
     var h = sr.getHeight();
-    ajax()
+  //  ajax()
  //   sr.initWithOthers(fileData)
     //
-   // var img = new srender.Image({style:{image:"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"}})
-   // sr.add(img)
+    
     var select
     var i=0
     var nowShape
@@ -89,6 +92,11 @@
 
 })
   // nowShape.rotation = qua
+    }
+    function getNowShape(){
+        
+     //  console.log(!sr.getNowShape()?sr.getNowShape():sr.getNowShape())
+       nowShape = sr.getNowShape()
     }
     function otherEdit(){
         sr.objectList.attr({
@@ -156,6 +164,69 @@
       //  sr.painter.refresh(true)
         
     }
+     //*****************************************************
+   //******************************************************penDrawer
+   var lockFlag=false;
+   var s; //定义路径对象
+   var sL = []; //路径数组
+   var isDraw = false;
+            function pen1(e) {
+                isDraw = true; //表示正在画线了
+                s = new srender.Polyline({ //初始化线条
+                    shape: {
+                        points: sL,
+                        smooth: 'spline',
+                    },
+                    style: {
+                    stroke: 'rgba(220, 20, 60, 0.8)',
+                     lineWidth: 2
+                      },
+                      draggable:true,
+                });
+             
+                sr.add(s); //将线条添加到图层上
+            }
+            function pen2(e) {
+                if (isDraw) { //判断是否是画线状态
+                    var x = e.event.zrX;
+                    var y = e.event.zrY; //获取鼠标位置
+                    sL.push([x, y]); //将位置存入数组
+                    /*
+                    zr.modShape(s.id, {
+                        pointList: sL
+                    }); //更新线条对象的位置数组
+                    */
+                  //  s.attr({shape: {pointList: sL,}})
+                    s.attr(
+                        'shape',{
+                        pointList: sL,
+                    }
+                    )
+                //    sr.refresh(); //刷新图层
+                }
+            }
+            function pen3(e) {
+                isDraw = false; //退出画线状态
+                sL = []; //清空线条路经,若不清空将会和上次画线连接到一起
+                // s=null;    //清空线条对象
+            }
+            //console.log(sr.handler._$handlers['mousedown'])
+   function Pen(){
+       if(lockFlag){
+           lockFlag=false;
+           sr.off('mousedown',pen1);
+            sr.off('mousemove',pen2);
+            sr.off('mouseup',pen3);
+            return;
+        }
+      
+        
+            sr.on('mousedown',pen1);
+            sr.on('mousemove',pen2);
+            sr.on('mouseup',pen3);
+            lockFlag=true;
+        }
+   //*******************************************************************************
     function addRect(){
         var rect = new srender.Rect({
             shape: {
@@ -167,6 +238,10 @@
            // draggable:true
         })
         sr.add(rect)
+    }
+    function changeColor(){
+        nowShape = sr.getNowShape()
+        nowShape?sr.changeFillColor(nowShape,"red"):console.log("shibai")
     }
     function addTriangle(){
         var tri=new srender.Isogon({
@@ -209,10 +284,27 @@
     }
     function toServe(msg){
    //    var tag = JSON.stringify(msg)
+      
        console.log(msg)
     }
-    sr.initWithCb(toServe)
-     setInterval("ajax()",5000);
+ //   sr.initWithCb(toServe)/
+    // setInterval("ajax()",5000);
+    
+   var img = new srender.Image(
+{style:
+    {image:"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",//"https://www.google.com.sg/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png",
+    height:200,
+    width:200,
+},
+}
+    )
+    function loadImage(){
+        sr.add(img)
+    }
+ //   console.log(img)
+  //  sr.addHover(img)
+  //  img.attr("position",[500,200])
+    console.log(sr.storage._roots)
     </script>
 </body>
 

@@ -43,9 +43,9 @@ export var version = '1.0.1';
  * @param {number|string} [opts.height] Can be 'auto' (the same as null/undefined)
  * @return {module:srender/SRender}
  */
-export function init(dom, opts, collaMode) {
+export function init(dom, opts, collaMode,user,page=-1) {//page是为多个sr实例服务
     var mode =  collaMode || false;
-    var sr = new SRender(guid(), dom, opts, mode);
+    var sr = new SRender(guid(), dom, opts, mode,user,page);
     instances[sr.id] = sr;
     return sr;
 }
@@ -94,6 +94,7 @@ function delInstance(id) {
 export {default as Group} from './Render/container/Group';
 export {default as Path} from './Element/graphic/Path';
 export {default as Image} from './Element/graphic/Image';
+export {default as Video} from './Element/graphic/Video';
 export {default as CompoundPath} from './Element/graphic/CompoundPath';
 export {default as Text} from './Element/graphic/Text';
 export {default as IncrementalDisplayable} from './Element/graphic/IncrementalDisplayable';
@@ -116,6 +117,8 @@ export {default as Star} from './Element/graphic/shape/Star';
 export {default as DbCircle} from './Element/graphic/shape/DbCircle';
 export {default as House} from './Element/graphic/shape/House';
 export {default as Trochoid} from './Element/graphic/shape/Trochoid';
+
+export {default as Action} from './Element/Action';
 
 export {default as LinearGradient} from './Element/graphic/LinearGradient';
 export {default as RadialGradient} from './Element/graphic/RadialGradient';
@@ -148,7 +151,7 @@ export {parseSVG};
  * @param {number} [opts.width] Can be 'auto' (the same as null/undefined)
  * @param {number} [opts.height] Can be 'auto' (the same as null/undefined)
  */
-var SRender = function (id, dom, opts, mode) {
+var SRender = function (id, dom, opts, mode, user, page) {
 
     opts = opts || {};
 
@@ -172,6 +175,8 @@ var SRender = function (id, dom, opts, mode) {
      */
     this.id = id;
 
+    this.page = page;
+
     this.mode = mode;
 
     var self = this;
@@ -193,7 +198,7 @@ var SRender = function (id, dom, opts, mode) {
     }
     var painter = new painterCtors[rendererType](dom, storage, opts, id);
 
-    var objectList = new ObjectList(storage,painter,stack,mode);
+    var objectList = new ObjectList(storage,painter,stack,mode,user);
 
     this.objectList = objectList //refactoring
 
@@ -230,8 +235,8 @@ var SRender = function (id, dom, opts, mode) {
     storage.delFromStorage = function (el) {
         oldDelFromStorage.call(storage, el);
 
-        el && el.removeSelfFromZr(self);
-    };
+    //    el && el.removeSelfFromZr(self); //解绑该元素的__zr是必要的，避免通过__zr检索到被删除的元素，但是有时需要一个被删除元素的__zr
+    };//为了安全也可以把删除元素的旧__zr放在另外的变量上，比如_zr
 
     storage.addToStorage = function (el) {
 
@@ -268,7 +273,8 @@ SRender.prototype = {
      */
 
     initWithCb: function(cb) {
-        this.pipeCb = cb
+        if(this.page === -1) this.pipeCb = cb;
+        else this.pipeCb = cb.bind(null,this.page);
     },
     /**
      * 添加元素
@@ -295,25 +301,49 @@ SRender.prototype = {
        this._needsRefresh = true;
     },
     /**
+     * 用以阻止所有元素的移动
+     */
+    disableDrag: function(bool){
+        this.handler._globalDrag = bool;
+    },
+    /**
      * 改变属性，仅限服务端数据改变
      */
-    attr: function(el,tag,isObserver){
+    attr: function(el,tag,isObserver,style,forUser){
         let mode = isObserver || false;
-        this.objectList.attr(el,tag,mode);
+        this.objectList.attr(el,tag,mode,style,forUser);
     },
 
+    changeFillColor: function(el,color){
+
+        this.objectList.attr(el,"style",this.mode,{fill:color})
+      //  el.attr("style",{fill:color})
+        // this._needsRefresh = true;
+    },
+    changeStrokeColor: function(el,color){
+      //  el.attr("style",{stroke:color})
+        // this._needsRefresh = true;
+        this.objectList.attr(el,"style",this.mode,{stroke:color})
+    },
+    changeLineWidth: function(el,width){
+        this.objectList.attr(el,"style",this.mode,{lineWidth:width})
+    },
+
+    stacking: function(type,id,msg){ //add stack from collaborator//caution not override var
+        this.objectList.stacking(type,id,msg)
+    },
     /**
      * 撤销功能
      */
-    undo: function(){
-        this.stack.undo();
+    undo: function(triggered){
+        this.stack.undo(triggered);
     //    this._needsRefresh = true;
     },
     /**
      * 回溯
      */
-    redo: function(){
-        this.stack.redo();
+    redo: function(triggered){
+        this.stack.redo(triggered);
     //    this._needsRefresh = true;
     },
 
@@ -473,7 +503,8 @@ SRender.prototype = {
      * Get choosen object(s)
      */
     getNowShape: function() {
-        return this.handler._select.parent||this.handler._select;
+        return this.handler._select;
+        //this.handler._select.parent||
     },
 
     /**

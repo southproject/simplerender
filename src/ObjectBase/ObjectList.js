@@ -4,12 +4,13 @@ import Element from '../Element/Element'
 import Group from '../Render/container/Group'
 import * as util from '../util/core/util'
 import Action from '../Element/Action'
+import Style from '../Element/graphic/Style';
 /**
  * 接受外部对队列的直接改变 (M)
  * @alias module:srender/ObjectList
  * @constructor
  */
-var ObjectList = function (storage,painter,stack,collaMode) { 
+var ObjectList = function (storage,painter,stack,collaMode,user) { 
 
     this.collaMode = collaMode ||false;
 
@@ -22,6 +23,10 @@ var ObjectList = function (storage,painter,stack,collaMode) {
     this._objectListLen = 0;
 
     this._objectList=[];
+
+    this._boundingRect = null;
+
+    this.user = user||"bing";
 
    
 };
@@ -37,18 +42,46 @@ ObjectList.prototype={
         }
     },
 
-    add: function(el) {
+    addBoundingRect: function(Rect){
+        this._boundingRect = new Cst.Rect({
+            shape: {
+                cx: 0,
+                cy: 0,
+                x: Rect.x,
+                y: Rect.y,
+                width: Rect.width,
+                height:Rect.height
+            },
+            style: {
+                fill: 'none',
+                stroke: '#14f1ff'
+            }
+            });
+        this.add(this._boundingRect,false)
+    },
+
+    removeBoundingRect: function(){
+        this._boundingRect&&this.del(this._boundingRect,false)
+    },
+
+    add: function(el,needStack = true) {
+
+        let El = null;
+
         if(el instanceof Element || el instanceof Group){
-           
-            this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
-
-            this.storage.addRoot(el);
-
-            let action = new Action("add",el)
             
-            this.stack.add(action)
+            El = el;
+
+            this._objectList.push({id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation})
+           
+            this.storage.addRoot(el);//stack操作
+
             //如果是协作模式，应该向服务器传递增加的信息
+           
+             //   this.collaMode&&el.pipe({type:"add",el:{id:el.id,type:el.type,totalTime:"02:11:54",frameRate:{rate:29.97,height:1080,width:1440,},shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+           
             this.collaMode&&el.pipe({type:"add",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
+          
         }
         else{
              console.log("键值对")
@@ -56,8 +89,10 @@ ObjectList.prototype={
            //  if(el.id>=guid('save')){
              //el为7个键值对 {id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}
             let type = el.type.charAt(0).toUpperCase()+el.type.slice(1) 
-            
-            let obj = new Cst[type]({
+
+            this._objectList.push(el)
+           
+            var obj = new Cst[type]({
                 id:el.id,
                 style:el.style,
                 position:el.position,
@@ -67,16 +102,21 @@ ObjectList.prototype={
                rotation:el.rotation,
          //   origin:data.origin
             })
-            this._objectList.push(el)
+      
+            El = obj;
 
             this.storage.addRoot(obj);
      //   }
         }
+        let action = new Action("add",El);
+        needStack&&this.stack.add(action);
         
-    
     },
 
-    del: function(el) {
+    del: function(el,needStack = true) {
+
+        let El = null;
+
         if (el == null) {
             // 不指定el清空 删除前应该添加占用判断 Group待完成
            /* for (var i = 0; i < this._objectList.length; i++) {
@@ -99,27 +139,37 @@ ObjectList.prototype={
             return;
         }
         if (el instanceof Element || el instanceof Group){
+
+            El = el;
+
             var idx = util.indexOf(this._objectList, el.id);
             this._objectList.splice(idx, 1);
             //如果是协作模式，应该向服务器传递增加的信息
             this.collaMode&&el.pipe({type:"delete",el:{id:el.id,type:el.type,shape:el.shape,style:el.style,position:el.position,scale:el.scale,rotation:el.rotation}})
             this.storage.delRoot(el)
-              let action = new Action("add",el)
-            
-            this.stack.add(action)
+             
         }
         else{
+
             var idx = util.indexOf(this._objectList, el);//键值对的删除需要注意下是否正确，待调试
             if (idx >= 0) {
                 this.storage._roots.splice(idx, 1);     //如果objectList和displayList顺序保持完全一致
                 this._objectList.splice(idx, 1);
             }
+            //由于增加了撤销，以下过程是必须的，需要注意撤销功能究竟需不需要id也回溯
+            let type = el.type.charAt(0).toUpperCase()+el.type.slice(1) 
+            let obj = new Cst[type]({id:el.id,style:el.style,position:el.position,shape:el.shape,scale:el.scale,rotation:el.rotation,})
+            El = obj;
         }
+
+        let action = new Action("add",El)
+        
+        needStack&&this.stack.add(action)
         
     },
 
-    attr: function(el,tag,mode) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
-        var array = this.storage._roots;
+    attr: function(el,tag,mode,style,forUser=false) { //此处tag为style、rotation、position、scale四类，从属于属性改变attr这个父tag，attr与add，delete并列
+        var array = this.storage._roots; //多余的信息放入style
         var obj;
         for (var i = 0, len = array.length; i < len; i++) {  //方案2
             if(el.id == array[i].id){                          //如果objectList一直为引用
@@ -127,8 +177,8 @@ ObjectList.prototype={
                 break
             }
         }
-        if(!obj){console.log("id不正确")}
-        else{
+        if(!obj){console.log("id不正确:",el.id,array)}//这里稍微有点问题，_roots中代表group的有自己的id，解决办法一是靠传递键值对时传递父元素信息
+        else{                                          //另一种是靠displayList判断
             switch (tag){
                 case 'position':  
                     obj.attr('position',el.position);
@@ -138,7 +188,17 @@ ObjectList.prototype={
                     obj.attr('shape',el.shape,mode);
                     break;
                 case 'style':  
-                    obj.attr('style',el.style);
+                    if(forUser) {
+                        obj.attr('style',style,false,false,true);//指text-style
+                    }
+                    else{
+                        var _preStyle = {}//只有style属性不含函数
+                        util.extend(_preStyle,util.extend1(obj.style,style))
+                        let action = new Action("style",obj,_preStyle)
+                        this.stack.add(action)
+                        obj.attr('style',style,mode);//
+                    }
+                    
                     break;
                 case 'rotation':  
                     obj.attr('rotation',el.rotation);
@@ -147,6 +207,9 @@ ObjectList.prototype={
                     obj.attr('scale',el.scale);
                     break;  
             }
+         //   let action = new Action("style",obj,)
+            
+         //   this.stack.add(action)
         }
         /*
         obj.attr({                                //此处协同编辑时改为分情况调用较好，传过来的值包含操作类型tag
@@ -158,14 +221,23 @@ ObjectList.prototype={
         */
     },
 
-    init: function(array,override = true) {
-        if(override){
+    stacking: function(type,id,msg){
+       const el = this.storage.getElById(id);
+        el && this.stack.add( new Action(type,el,msg),true)
+    },
+
+    init: function(array,overRide = true) {
+        if(overRide){
             this.del()
           //  this.add(array)
             guid('recover')
             if(array){
-                array.forEach(function(el){this.add(el)},this);
+                if(array instanceof Array){
+                    array.forEach(function(el){this.add(el,false)},this);
+                }
+                else this.add(array);
             }
+               
             else{
                 this.painter.clear()
             }

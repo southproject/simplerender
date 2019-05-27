@@ -13,7 +13,7 @@
 <body>
    
     
-    <div id="canvas" style="width:1418px;height:904px;border:1px dashed" ></div>
+    <div id="suibian" style="width:1418px;height:904px;border:1px dashed" ></div>
     <div class='btn' style="color:black;" ><Button onclick=addNew() style="background-image:linear-gradient(#f5c153,#ea920d)">addCircle</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=Pen() style="background-image:linear-gradient(#f5c153,#ea920d)">drawer</Button></div>
     <div class='btn' style="color:black;" ><Button onclick=Container() style="background-image:linear-gradient(#f5c153,#ea920d)">bounding</Button></div>
@@ -22,9 +22,16 @@
     <div class='btn' ><Button onclick=addImage() style="background-image:linear-gradient(#f5c153,#ea920d)">加入图片</Button></div>
     <div class='btn' ><Button onclick=addApp() style="background-image:linear-gradient(#f5c153,#ea920d)">苹果</Button></div>
     <div class='btn' ><Button onclick=addHouse() style="background-image:linear-gradient(#f5c153,#ea920d)">房子</Button></div>
+    <div class='btn' ><Button onclick=getNowShape() style="background-image:linear-gradient(#f5c153,#ea920d)">当前元素</Button></div>
+    <div class='btn' ><Button onclick=getRoots() style="background-image:linear-gradient(#f5c153,#ea920d)">root数组</Button></div>
+    <div class='btn' ><Button onclick=getDisplayList() style="background-image:linear-gradient(#f5c153,#ea920d)">displayList数组</Button></div>
+    <div class='btn' ><Button onclick=undo() style="background-image:linear-gradient(#f5c153,#ea920d)">撤销</Button></div>
+    <div class='btn' ><Button onclick=redo() style="background-image:linear-gradient(#f5c153,#ea920d)">回溯</Button></div>
+    <div class='btn' ><Button onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">yanse</Button></div>
+    <div class='btn' ><Button onclick=changeWidth() style="background-image:linear-gradient(#f5c153,#ea920d)">width</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
-    var dom=document.getElementById("canvas")
+    var dom=document.getElementById("suibian")
     var elementStyle = {
         stroke: '#ccc',
         fill: 'white',
@@ -38,7 +45,7 @@
     var select
   //  var nowShape
     //
-    var group = new srender.Group();
+   /*  var group = new srender.Group();
     for (var i = 0; i < 3; ++i) {
         var r = 50 * Math.random() + 20;
         var circle = new srender.Circle({
@@ -51,12 +58,66 @@
                 (w * 0.6 - r * 2) * Math.random() + r + w * 0.2,
                 (h * 0.6 - r * 2) * Math.random() + r + h * 0.2
             ],
-            style: elementStyle,
+            style: {
+            "fill": "rgb(180, 180, 0)"
+            },
+           
             draggable: true
+        }).on("mousemove",function(){
+            var gg = group.getBoundingRect()
+            console.log(gg)
         })
         group.add(circle);
     }
-    sr.add(group)
+  
+    sr.add(group) */
+  /*****************/
+    var circle = new srender.Circle({ id:'100', scale : [1, 1], shape : { cx : 0, cy : 0, r : 100 } });
+    var circle2 = new srender.Circle({
+        id:'200',
+        scale : [1, 1],
+        shape : {
+            cx : 200,
+            cy : 0,
+            r : 100
+        },
+        "style": {
+            "fill": "rgb(0, 180, 0)"
+        }
+    });
+
+    circle.draggable =false;
+    circle2.draggable =false;
+
+    var deltPostion =null;
+    var Draggroup =null;
+
+    var g1 = new srender.Group({
+        position: [100, 100]
+    });
+    g1.add(circle);
+    g1.add(circle2);
+
+    sr.on('mouseup', function(e){
+        console.log('mouseup');
+        Draggroup=null;
+    });
+
+    g1.on('mousedown', function(e) {
+        Draggroup =g1;
+        deltPostion =[e.event.zrX-Draggroup.position[0],e.event.zrY-Draggroup.position[1]];
+    });
+
+    sr.on('mousemove', function(e){
+        if(Draggroup !=null){
+            var new_pos =[e.event.zrX,e.event.zrY];
+            Draggroup.position=[new_pos[0]-deltPostion[0],new_pos[1]-deltPostion[1]];
+            Draggroup.dirty();
+        }
+    });
+
+    sr.add(g1);
+  /*  *************/
     var flag=false
     function ar(){
         if(flag){sr.add(sun2);flag=false }
@@ -65,12 +126,18 @@
     
     for (var i = 0; i < 3; ++i) {
         var r = 50 * Math.random() + 20;
-        var circle = new srender.Circle({
+        let circle = new srender.Circle({
+            draggable:true,
             shape: {
                 cx:(w * 0.6 - r * 2) * Math.random() + r + w * 0.2,
                 cy:(h * 0.6 - r * 2) * Math.random() + r + h * 0.2,
                 r: r
             },
+            style: {
+            // fill: 'black',
+         //   stroke: 'black'
+        },
+        position:[100,100]
     
         })
        
@@ -78,6 +145,7 @@
     }
     
     var sun3=new srender.Circle({
+        draggable:true,
         shape:{
             cx:70,
             cy: 90,
@@ -89,7 +157,16 @@
         },
     })
     sr.add(sun3)
+    sun3.animate('shape', true)
+        .when(5000, {
+            cx: w - r
+        })
+        .when(10000, {
+            cx: r
+        })
+        .start();
     var rect1=new srender.Rect({
+        draggable:true,
         shape:{
        
         r: 2,
@@ -107,6 +184,29 @@
     rect1.on('click',function(){
         console.log(rect1.position)
     })
+    function getNowShape(){
+       console.log(!sr.getNowShape()?sr.getNowShape():sr.getNowShape())
+    }
+    function getRoots(){
+        console.log(sr.storage._roots)
+    }
+    function undo(){
+        sr.undo()
+    }
+    function redo(){
+        sr.redo()
+    }
+    function getDisplayList(){
+        console.log(sr.storage.getDisplayList())
+    }
+    function changeColor(){
+        nowShape = sr.getNowShape()
+        nowShape?sr.changeFillColor(nowShape,"red"):console.log("shibai")
+    }
+    function changeWidth(){
+        nowShape = sr.getNowShape()
+        nowShape?sr.changeLineWidth(nowShape,10):console.log("shibai")
+    }
     function addNew(){
         var c=new srender.Circle({
         shape:{
@@ -174,7 +274,7 @@
         sr.remove()
     }
     function ClearShape(){
-        sr.remove(select)
+        sr.getNowShape()&&sr.remove(sr.getNowShape())
     }
     //*************************************************Container
     var rect=null
@@ -184,6 +284,7 @@
         isContain=true;
         start =[e.event.zrX,e.event.zrY];
         rect=new srender.Rect({
+            draggable:true,
             shape:{
             r: 2,
             x: start[0],
@@ -192,13 +293,13 @@
             height: 0
     },
    // position:[100,100],
-  //  draggable:true,
       style: {
         stroke: '#ccc',
         fill: 'none',
         lineDash: [5, 5, 10, 10],
     },
     })
+    rect.draggable = true;
     }
     function container2(e){
         if(!isContain) return
@@ -220,10 +321,10 @@
     function Container(){
        // if(lockFlag)
        rect&&sr.remove(rect)
-        
         sr.on('mousedown',container1)
         sr.on('mousemove',container2)
         sr.on('mouseup',container3)
+       
     }
     //*****************************************************
    //******************************************************penDrawer
@@ -272,11 +373,13 @@
             }
             //console.log(sr.handler._$handlers['mousedown'])
    function Pen(){
+        sr.disableDrag(false)
        if(lockFlag){
            lockFlag=false;
            sr.off('mousedown',pen1);
             sr.off('mousemove',pen2);
             sr.off('mouseup',pen3);
+            sr.disableDrag(true)
             return;
         }
       
@@ -292,11 +395,12 @@
             points.push([Math.random() * 300 + 100, Math.random() * 300 + 100]);
         }
    var smoothLine = new srender.Polyline({
-            position: [10, 10],
+            position: [100, 100],
             style : {
                 lineDash: [5, 5, 10, 10],
                 stroke: 'rgba(220, 20, 60, 0.8)',
-                lineWidth: 2
+                lineWidth: 2,
+              
             },
             shape: {
                 smooth: 'spline',
@@ -305,9 +409,76 @@
             draggable:true
         });
         sr.add(smoothLine);
+    function newText(){
+        let text = new srender.Text({
+       draggable:true,
+        style:{
+            x:500,
+            y:500,
+            text: '默认文字',
+            textAlign: 'center',
+            textVerticalAlign: 'middle',
+            fontSize: 200,
+            fontFamily: 'Lato',
+            fontWeight: 'bolder',
+            textFill: '#0ff',
+            blend: 'lighten'
+        }})
+        sr.add(text)
+    }
+    var text = new srender.Text({
+       draggable:true,
+        style:{
+            x:500,
+         //
+            y:500,
+        //    _x:100,
+        //    _y:100,
+            text: 'srender',
+            textAlign: 'center',
+            textVerticalAlign: 'middle',
+            fontSize: 200,
+            fontFamily: 'Lato',
+            fontWeight: 'bolder',
+            textFill: '#0ff',
+            blend: 'lighten'
+        }})
+    sr.add(text)
+    var text1 = new srender.Text({
+       draggable:true,
+        style:{
+            x:300,
+            y:800,
+            fontSize: 100,
+            text: 'doit',
+            textAlign: 'center',
+            textVerticalAlign: 'middle',
+        }})
+    sr.add(text1)
      //   console.log(sr.handler._$handlers['mousedown'])
      //   console.log(sr.handler.proxy._$handlers)
         console.log(srender.Circle)
+    sr.on("dblclick",rectBound)
+    function rectBound(){
+        console.log(smoothLine)
+        var textRect = smoothLine.getBoundingRect();
+        var boundingRect = new srender.Rect({
+        shape: {
+            cx: 0,
+            cy: 0,
+            x: textRect.x,
+            y: textRect.y,
+            width: textRect.width,
+            height: textRect.height
+        },
+        style: {
+            fill: 'none',
+            stroke: '#14f1ff'
+        }
+        });
+        sr.addHover(boundingRect);
+    }
+    
     </script>
 </body>
 

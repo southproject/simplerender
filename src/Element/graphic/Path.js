@@ -158,7 +158,6 @@ Path.prototype = {
             // Remove lineDash
             ctx.setLineDash([]);
         }
-
         // Draw rect text
         if (style.text != null) {
             // Only restore transform when needs draw text.
@@ -225,14 +224,67 @@ Path.prototype = {
 
         return rect;
     },
+    getVisionBoundingRect: function(){
+       // var rect = this._rect;
+        var $rect = this.__rect;
+        var style = this.style;
+        var tmpMat = [];
+        var needsUpdateRect = !$rect;
+        if (needsUpdateRect) {
+            var path = this.path;
+            if (!path) {
+                // Create path on demand.
+                path = this.path = new PathProxy();
+            }
+            if (this.__dirtyPath) {
+                path.beginPath();
+                this.buildPath(path, this.shape, false);
+            }
+            $rect = path.getBoundingRect();
+        }
+        this.__rect = $rect;
+        var transform = this.getLocalTransform(tmpMat);
+        if (style.hasStroke()) {
+            // Needs update rect with stroke lineWidth when
+            // 1. Element changes scale or lineWidth
+            // 2. Shape is changed
+            var rectWithStroke = this.__rectWithStroke || (this.__rectWithStroke = $rect.clone());
+            if (this.__dirty || needsUpdateRect) {
+                rectWithStroke.copy($rect);
+                // FIXME Must after updateTransform
+                var w = style.lineWidth;
+                // PENDING, Min line width is needed when line is horizontal or vertical
+                var lineScale = style.strokeNoScale ? this.getLineScale() : 1;
+
+                // Only add extra hover lineWidth when there are no fill
+                if (!style.hasFill()) {
+                    w = Math.max(w, this.strokeContainThreshold || 4);
+                }
+                // Consider line width
+                // Line scale can't be 0;
+                if (lineScale > 1e-10) {
+                    rectWithStroke.width += w / lineScale;
+                    rectWithStroke.height += w / lineScale;
+                    rectWithStroke.x -= w / lineScale / 2;
+                    rectWithStroke.y -= w / lineScale / 2;
+                }
+            }
+            rectWithStroke.applyTransform(transform);
+            // Return rect with stroke
+            return rectWithStroke;
+        }
+        $rect.applyTransform(transform);
+        return $rect;
+    },
 
     contain: function (x, y) {
+       
         var localPos = this.transformCoordToLocal(x, y);
         var rect = this.getBoundingRect();
         var style = this.style;
         x = localPos[0];
         y = localPos[1];
-
+        
         if (rect.contain(x, y)) {
             var pathData = this.path.data;
             if (style.hasStroke()) {
@@ -292,7 +344,7 @@ Path.prototype = {
     },
 
     // Overwrite attrKV
-    attrKV: function (key, value, mode) {
+    attrKV: function (key, value, mode,stack=true,isUserText=false) {
         // FIXME
         if (key === 'shape') {
             this.setShape(value,mode);
@@ -300,7 +352,7 @@ Path.prototype = {
             this._rect = null;
         }
         else {
-            Displayable.prototype.attrKV.call(this, key, value, mode);
+            Displayable.prototype.attrKV.call(this, key, value, mode,stack,isUserText);
         }
     },
 

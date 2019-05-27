@@ -22,6 +22,9 @@ var Element = function (opts) { // jshint ignore:line
      * @type {string}
      */
     this.id = guid()//||opts.id;  // 反过来
+    this._preTransform = [];
+    this._x = opts.shape&&opts.shape.x || null;
+    this._y = opts.shape&&opts.shape.y || null;
 };
 
 Element.prototype = {
@@ -77,6 +80,8 @@ Element.prototype = {
      * @param  {number} dx dx on the global space
      * @param  {number} dy dy on the global space
      */
+    saveTransform:true,
+
     drift: function (dx, dy) {
         switch (this.draggable) {
             case 'horizontal':
@@ -86,13 +91,28 @@ Element.prototype = {
                 dx = 0;
                 break;
         }
-
+        if(this.type === "video"){
+            this.attr("style",{x:this.showStyle.x + dx,y:this.showStyle.y + dy})
+        }
         var m = this.transform;
         if (!m) {
             m = this.transform = [1, 0, 0, 1, 0, 0];
         }
         m[4] += dx;
         m[5] += dy;
+        if(this.style._x){
+            this.style._x +=dx;
+            this.style._y +=dy;
+        }//针对文字的定位
+        
+      //  console.log("drift:",[ m[4], m[5]])
+        if(this.saveTransform){
+        //初次drift时候，其他地方无法拿到不存在的transform，所以这个坐标和真实开始的位置有细小的差异。
+            this._preTransform = [...this.transform]
+            this.saveTransform = false;
+          //  console.log(this._preTransform)
+        }
+            
         this.pipe({type:"attr",
             tag:"position",
             el:{id:this.id,position:[ m[4],m[5]]}
@@ -125,16 +145,23 @@ Element.prototype = {
     /**
      * @protected
      */
-    attrKV: function (key, value, mode) {
+    attrKV: function (key, value, mode=false,stack=true) {
         if (key === 'position' || key === 'scale' || key === 'origin'||key === 'rotation') {//
             // Copy the array
             if (value) {
                 var target = this[key];
+               /* if(stack){
+                    this._preTransform = [...this.transform];
+                //   this._stackDelay = true;//position的设定最是转换到transform上的，到那时可入栈
+                   this.__zr.objectList.stack.add(new Action("transform",this,this._preTransform))
+              
+               } */
                 if (!target) {
                     target = this[key] = [];
                 }
                 target[0] = value[0];
                 target[1] = value[1];
+                
             }
         }
         else {
@@ -162,16 +189,16 @@ Element.prototype = {
      * @param {string|Object} key
      * @param {*} value
      */
-    attr: function (key, value, isObserver) {
+    attr: function (key, value, isObserver,stack=true,isUserText=false) {
         var mode = isObserver || false        //默认是发送者
         if (typeof key === 'string') {
-            this.attrKV(key, value ,mode);
+            this.attrKV(key, value ,mode,stack,isUserText);
         }
         else if (zrUtil.isObject(key)) {
             for (var name in key) {
                 if (key.hasOwnProperty(name)) {
                    
-                    this.attrKV(name, key[name],mode);
+                    this.attrKV(name, key[name],mode,stack,isUserText);
                 }
             }
         }
@@ -221,13 +248,12 @@ Element.prototype = {
     /**
      * Add self from zrender instance.
      * Not recursively because it will be invoked when element added to storage.
-     * @param {module:zrender/ZRender} zr
+     * @param {module:zrender/ZRender} zr//sr
      */
     addSelfToZr: function (zr) {
 
         this.__zr = zr;
 
-        
         // 添加动画
         var animators = this.animators;
         if (animators) {
