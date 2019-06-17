@@ -305,7 +305,10 @@
     sr.add(img)
     sr.addHover(img)
   //  img.attr("position",[500,200])
-    console.log(sr.painter._layers)
+    console.log(sr.painter._layers)//.ctx.clearRect(0,0,100,100))
+  //  console.log(sr.painter._layers[0])//.ctx.clearRect(0,0,100,100))
+    console.log(sr.painter._singleCanvas)
+    console.log(Object.keys(sr.painter._layers))
     </script>
 </body>
 
