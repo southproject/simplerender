@@ -315,7 +315,7 @@ SRender.prototype = {
     },
 
     changeFillColor: function(el,color){
-
+        if(!el) return 
         this.objectList.attr(el,"style",this.mode,{fill:color})
       //  el.attr("style",{fill:color})
         // this._needsRefresh = true;
@@ -323,9 +323,11 @@ SRender.prototype = {
     changeStrokeColor: function(el,color){
       //  el.attr("style",{stroke:color})
         // this._needsRefresh = true;
+        if(!el) return 
         this.objectList.attr(el,"style",this.mode,{stroke:color})
     },
     changeLineWidth: function(el,width){
+        if(!el) return
         this.objectList.attr(el,"style",this.mode,{lineWidth:width})
     },
 
