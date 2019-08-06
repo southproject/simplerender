@@ -406,9 +406,12 @@ Painter.prototype = {
 
     _doPaintList: function (list, paintAll) {
         var layerList = [];
+       
         for (var zi = 0; zi < this._zlevelList.length; zi++) {
             var zlevel = this._zlevelList[zi];
             var layer = this._layers[zlevel];
+           
+            
             if (layer.__builtin__
                 && layer !== this._hoverlayer
                 && (layer.__dirty || paintAll)
@@ -434,6 +437,7 @@ Painter.prototype = {
                 ? this._backgroundColor : null;
             // All elements in this layer are cleared.
             if (layer.__startIndex === layer.__endIndex) {
+                console.log("you do it?")
                 layer.clear(false, clearColor);
             }
             else if (start === layer.__startIndex) {

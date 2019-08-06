@@ -3,7 +3,7 @@ import Rect from '../graphic/shape/Rect'
 function Click(){
 
     this._chooseObject = null;
-
+    this._preSelectRect = null;
     this.on('click',this._choose,this)
     
 }
@@ -36,14 +36,15 @@ Click.prototype = {
     },
     drawVisionRect: function(target){
         var param;
-        param = target&&target.getVisionBoundingRect()
+        param = target&&target.getVisionBoundingRect();
         target.__zr.showProperty&&(typeof target.__zr.showProperty === 'function')&&target.__zr.showProperty(target.type)
-        console.log("bounding:",param)
-        this.storage.addRoot(new Rect({shape:param, style: {
+        this._preSelectRect && this.storage.delRoot(this._preSelectRect)
+        this._preSelectRect = new Rect({shape:param, style: {
             stroke: '#ccc',
             fill: 'none',
             lineDash: [5, 5, 10, 10],
-        },}))
+        },})
+        this.storage.addRoot(this._preSelectRect)
         
 
     },

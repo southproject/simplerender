@@ -27,7 +27,9 @@
     <div class='btn' ><Button onclick=otherEdit() style="background-image:linear-gradient(#f5c153,#ea920d)">编辑键值对</Button></div>
     <div class='btn red'><Button class= "red" onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">改变颜色</Button></div>
     <div class='btn red'><Button onclick=getNowShape() style="background-image:linear-gradient(#f5c153,#ea920d)">选中</Button></div>
-    <div class='btn red'><Button onclick=loadImage() style="background-image:linear-gradient(#f5c153,#ea920d)">图片</Button></div>
+   
+    <div class='btn red'><Button onclick=eraser() style="background-image:linear-gradient(#f5c153,#ea920d)">橡皮</Button></div>
+    <div class='btn red'><Button onclick=itext() style="background-image:linear-gradient(#f5c153,#ea920d)">文字</Button></div>
     <script src="./dist/srender.js"></script>
     <script src="./objectList/1.json"></script>
     <script type="text/javascript">
@@ -258,6 +260,16 @@
       //   tri.transform=[2,0,0,2,0,0]
         sr.add(tri)
     }
+    function itext(){
+        var ha=new srender.Text({
+       
+        style: {
+            text:"aaa"
+        },
+       
+         })
+        sr.add(ha)
+    }
     function addHouse(){
         var house=new srender.House({
         shape:{
@@ -268,7 +280,7 @@
             fill: 'none',
             stroke: 'green'
         },
-      //  scale:[2,2]
+      
          })
         sr.add(house)
     }
@@ -296,19 +308,25 @@
     height:200,
     width:200,
 },
+position:[200,100]
 }
+
     )
     function loadImage(){
         sr.add(img)
     }
  //   console.log(img)
     sr.add(img)
-    sr.addHover(img)
+  //  sr.painter.getLayers()[0].ctx.clearRect(0,0,100,100)
+  //  sr.addHover(img)
   //  img.attr("position",[500,200])
-    console.log(sr.painter._layers)//.ctx.clearRect(0,0,100,100))
+  function eraser(){
+    sr.painter.getLayers()[0].ctx.clearRect(0,0,100,100)
+  }
+    console.log(sr.painter.getLayers()[0])//.ctx.clearRect(0,0,100,100))
   //  console.log(sr.painter._layers[0])//.ctx.clearRect(0,0,100,100))
     console.log(sr.painter._singleCanvas)
-    console.log(Object.keys(sr.painter._layers))
+    console.log(sr.painter._zlevelList)
     </script>
 </body>
 

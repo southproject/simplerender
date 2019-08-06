@@ -29,6 +29,7 @@
     <div class='btn' ><Button onclick=redo() style="background-image:linear-gradient(#f5c153,#ea920d)">回溯</Button></div>
     <div class='btn' ><Button onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">yanse</Button></div>
     <div class='btn' ><Button onclick=changeWidth() style="background-image:linear-gradient(#f5c153,#ea920d)">width</Button></div>
+    <div class='btn' ><Button onclick=eraser() style="background-image:linear-gradient(#f5c153,#ea920d)">橡皮檫</Button></div>
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("suibian")
@@ -390,6 +391,54 @@
             lockFlag=true;
         }
    //*******************************************************************************
+   //****************eraser************
+   var isEraser = false;
+   var lockEraser=false;
+   function down(){
+    isEraser = true;
+   }
+   function sweep(e){
+    if (isEraser) { //判断是否是画线状态
+        var x = e.event.zrX;
+        var y = e.event.zrY; 
+    const ctx = sr.painter.getLayers()[0].ctx;
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(x,y,10,0,2*Math.PI);
+    ctx.clip()
+    ctx.save()
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0,0,sr.getWidth(),sr.getHeight());
+    ctx.restore();
+    ctx.restore();
+    }
+   }
+   function up(){
+    isEraser = false;
+   }
+   function eraser(){
+     sr.disableDrag(false)
+       if(lockEraser){
+        lockEraser=false;
+           sr.off('mousedown',down);
+            sr.off('mousemove',sweep);
+            sr.off('mouseup',up);
+            sr.disableDrag(true)
+            return;
+        }
+      
+        
+            sr.on('mousedown',down);
+            sr.on('mousemove',sweep);
+            sr.on('mouseup',up);
+            lockEraser=true;
+        }
+
+    
+    
+
+   
+   //**********************************
    var points = [];
         for (var i = 0; i < 10; i++) {
             points.push([Math.random() * 300 + 100, Math.random() * 300 + 100]);
