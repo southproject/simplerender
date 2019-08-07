@@ -30,6 +30,10 @@
     <div class='btn' ><Button onclick=changeColor() style="background-image:linear-gradient(#f5c153,#ea920d)">yanse</Button></div>
     <div class='btn' ><Button onclick=changeWidth() style="background-image:linear-gradient(#f5c153,#ea920d)">width</Button></div>
     <div class='btn' ><Button onclick=eraser() style="background-image:linear-gradient(#f5c153,#ea920d)">橡皮檫</Button></div>
+    
+    <div class='btn' ><Button onclick=scalelarge() style="background-image:linear-gradient(#f5c153,#ea920d)">放大</Button></div>
+    <div class='btn' ><Button onclick=scalemini() style="background-image:linear-gradient(#f5c153,#ea920d)">缩小</Button></div>
+
     <script src="./dist/srender.js"></script>
     <script type="text/javascript">
     var dom=document.getElementById("suibian")
@@ -208,6 +212,16 @@
         nowShape = sr.getNowShape()
         nowShape?sr.changeLineWidth(nowShape,10):console.log("shibai")
     }
+    function scalelarge(){
+        nowShape = sr.getNowShape()
+        let pa =nowShape.getBoundingRect()
+        nowShape.attr({scale:[1.2,1.2],origin:[pa.x,pa.y]})
+        console.log(nowShape.transform)
+    }
+
+
+
+
     function addNew(){
         var c=new srender.Circle({
         shape:{
@@ -390,55 +404,53 @@
             sr.on('mouseup',pen3);
             lockFlag=true;
         }
-   //*******************************************************************************
-   //****************eraser************
-   var isEraser = false;
-   var lockEraser=false;
-   function down(){
-    isEraser = true;
-   }
-   function sweep(e){
-    if (isEraser) { //判断是否是画线状态
-        var x = e.event.zrX;
-        var y = e.event.zrY; 
-    const ctx = sr.painter.getLayers()[0].ctx;
-    ctx.save()
-    ctx.beginPath()
-    ctx.arc(x,y,10,0,2*Math.PI);
-    ctx.clip()
-    ctx.save()
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0,0,sr.getWidth(),sr.getHeight());
-    ctx.restore();
-    ctx.restore();
+    //*******************************************************************************
+    //****************eraser************
+    var isEraser = false;
+    var lockEraser=false;
+    function down(){
+        isEraser = true;
     }
-   }
-   function up(){
-    isEraser = false;
-   }
-   function eraser(){
-     sr.disableDrag(false)
-       if(lockEraser){
+    function sweep(e){
+        if (isEraser) { //判断是否是画线状态
+            var x = e.event.zrX;
+            var y = e.event.zrY;
+
+            var cc = new srender.Circle({shape:{cx:x,cy:y,r:5}})
+            sr.getNowShape().setClipPath(cc)
+            // const ctx = sr.painter.getLayers()[0].ctx;
+
+            // ctx.save()
+            // ctx.beginPath()
+            // ctx.arc(x,y,10,0,2*Math.PI);
+            // ctx.clip()
+            // ctx.save()
+            // ctx.fillStyle = 'white';
+            // ctx.fillRect(0,0,sr.getWidth(),sr.getHeight());
+            // ctx.restore();
+            // ctx.restore();
+        }
+    }
+    function up(){
+        isEraser = false;
+    }
+    function eraser(){
+        sr.disableDrag(false)
+        if(lockEraser){
         lockEraser=false;
-           sr.off('mousedown',down);
+            sr.off('mousedown',down);
             sr.off('mousemove',sweep);
             sr.off('mouseup',up);
             sr.disableDrag(true)
             return;
         }
-      
-        
-            sr.on('mousedown',down);
-            sr.on('mousemove',sweep);
-            sr.on('mouseup',up);
-            lockEraser=true;
-        }
-
+        sr.on('mousedown',down);
+        sr.on('mousemove',sweep);
+        sr.on('mouseup',up);
+        lockEraser=true;
+    }
     
-    
-
-   
-   //**********************************
+    //**********************************
    var points = [];
         for (var i = 0; i < 10; i++) {
             points.push([Math.random() * 300 + 100, Math.random() * 300 + 100]);

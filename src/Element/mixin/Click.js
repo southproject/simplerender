@@ -3,9 +3,10 @@ import Rect from '../graphic/shape/Rect'
 function Click(){
 
     this._chooseObject = null;
-    this._preSelectRect = null;
+
     this.on('click',this._choose,this)
     
+    this.__visionRect = null;
 }
 
 Click.prototype = {
@@ -20,9 +21,8 @@ Click.prototype = {
       //  console.log("Click:"+clickingTarget.type)
 
         if(clickingTarget){
-        //    console.log("进入流程:",clickingTarget.type)
+            console.log("进入流程:",clickingTarget.type)
             if(this._preSelect){
-                
                 //_down(this._preSelect)
             }
             this._select = clickingTarget;
@@ -32,25 +32,28 @@ Click.prototype = {
             this._chooseObject = clickingTarget
 
         }
+        else{
+            this.storage.delRoot(this.__visionRect);
+        }
+        console.log("点击目标",e.target.transform);
 
     },
     drawVisionRect: function(target){
         var param;
-        param = target&&target.getVisionBoundingRect();
+        param = target&&target.getVisionBoundingRect()
         target.__zr.showProperty&&(typeof target.__zr.showProperty === 'function')&&target.__zr.showProperty(target.type)
-        this._preSelectRect && this.storage.delRoot(this._preSelectRect)
-        this._preSelectRect = new Rect({shape:param, style: {
+        console.log("bounding:",param)
+        if(this.__visionRect) this.storage.delRoot(this.__visionRect)
+        this.__visionRect = new Rect({shape:param, style: {
             stroke: '#ccc',
             fill: 'none',
             lineDash: [5, 5, 10, 10],
         },})
-        this.storage.addRoot(this._preSelectRect)
+        this.storage.addRoot(this.__visionRect)
         
 
     },
-    clearVisonRect: function(e){
-
-    },
+    
     _highlight(el){
         if(el&&el.style&&el.style.fill==="transparent"){
            let color = lift(el.style.stroke,0.9)

@@ -353,7 +353,7 @@ function isHover(displayable, x, y) {
             // If clipped by ancestor.
             // FIXME: If clipPath has neither stroke nor fill,
             // el.clipPath.contain(x, y) will always return false.
-            if (el.clipPath && !el.clipPath.contain(x, y))  {
+            if (el.clipPath && el.clipPath.contain(x, y))  {
                 return false;
             }
             if (el.silent) {
@@ -362,6 +362,7 @@ function isHover(displayable, x, y) {
             el = el.parent;
         }
         return isSilent ? SILENT : true;
+        
     }
 
     return false;

@@ -282,7 +282,7 @@ Transformable.getLocalTransform = function (target, m) {
         m[5] -= origin[1];
     }
     matrix.scale(m, m, scale);
-    if (rotation) {
+    if (rotation[0]) {
         matrix.rotate(m, m, rotation);
     }
     if (origin) {
