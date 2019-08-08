@@ -81,6 +81,21 @@ Draggable.prototype = {
             this._y = y;
 
             draggingTarget.drift(dx, dy, e);
+            if(draggingTarget.type == 'vision'){
+                let tparam = draggingTarget.target.getVisionBoundingRect();
+                //let cx = pa.x+pa.width/2; //e.target.x
+                //let cy = pa.y+pa.height/2; //e.target.y
+                //   let tx = tparam.x+tparam.width;
+                //   ty = tparam.y+tparam.height;
+                let s1 = (dx)/tparam.width;
+                let s2 = (dy)/tparam.height;
+                //if(s1<0.05) s1 = 0.05;
+                //if(s2<0.05) s2 = 0.05;
+                let pa = draggingTarget.target.getBoundingRect();
+                draggingTarget.target.origin = [pa.x,pa.y]
+                draggingTarget.target.changeShape(s1,s2);
+            }
+
             this.dispatchToElement(param(draggingTarget, e), 'drag', e.event);
          //   console.log("draggingTarget:"+draggingTarget)
             var dropTarget = this.findHover(x, y, draggingTarget).target;//拖动元素的放置目标
