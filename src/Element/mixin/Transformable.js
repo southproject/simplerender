@@ -269,7 +269,6 @@ transformableProto.transformCoordToGlobal = function (x, y) {
  * @param {Array.<number>} [m]
  */
 Transformable.getLocalTransform = function (target, m) {
-    console.log("getLocal :42 m:",m)
     m = m || [];
     mIdentity(m);
     var origin = target.origin;
@@ -294,7 +293,7 @@ Transformable.getLocalTransform = function (target, m) {
 
     m[4] += position[0];
     m[5] += position[1];
-    console.log("getLocal:41 m:",m)
+
     return m;
 };
 

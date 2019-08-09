@@ -124,19 +124,21 @@ Element.prototype = {
 
     changeShape: function (dx, dy) {
         var m = this.transform;
-        // if (!m) {
-        //     m = this.transform = [1, 0, 0, 1, 0, 0];
-        // }
+        if (!m) {
+            m = this.transform = [1, 0, 0, 1, 0, 0];
+        }
         // m[0] += dx;
         // m[3] += dy;
-        console.log("move",this.origin)
         // this.pipe({type:"attr",
         //     tag:"position",
         //     el:{id:this.id,position:[ m[4],m[5]]}
         // })  //是否要为主动和被动的位移分别设置函数
         //this.decomposeTransform();
-        var s1 = m[0]+ dx;
-        var s2 = m[3]+ dy;
+
+        console.log(m[0],m[3]);
+
+        var s1 = m[0] + dx;
+        var s2 =  m[3] + dy;
         if(s1<0.05) s1 = 0.05;
         if(s2<0.05) s2 = 0.05;
         this.scale=[s1,s2];

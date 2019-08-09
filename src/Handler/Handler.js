@@ -6,7 +6,8 @@ import IText from '../Element/mixin/IText';
 import BlockClear from '../Element/mixin/BlockClear';
 import Eventful from '../Element/mixin/Eventful';
 import * as eventTool from '../util/core/event';
-
+import Rect from '../Element/graphic/shape/Rect'
+//import Circle from '../Element/graphic/shape/Circle'
 var SILENT = 'silent';
 
 function makeEventPacket(eveType, targetInfo, event) {
@@ -96,7 +97,8 @@ var Handler = function(storage, painter, proxy, painterRoot) {
      * @type {number}
      */
     this._lastY;
-
+    this.__visionRect = null;
+    this.__visionCircle = null;
 
     Draggable.call(this);
 
@@ -112,7 +114,33 @@ var Handler = function(storage, painter, proxy, painterRoot) {
 Handler.prototype = {
 
     constructor: Handler,
+    //self define
+    drawVisionRect: function(target){
+        if(target){
+            var param = target.getVisionBoundingRect()
+            if((target.transform[0]===1)&&(target.transform[3]===1)){
+                target.originWidth = param.width;
+                target.originHeight = param.height; 
+            }
+            target.__zr.showProperty&&(typeof target.__zr.showProperty === 'function')&&target.__zr.showProperty(target.type)
+            console.log("bounding:",param)
+            if(this.__visionRect) this.storage.delRoot(this.__visionRect)
+            // if(this.__visionCircle){
+            //     this.__visionCircle.target=null;
+            //     this.storage.delRoot(this.__visionCircle)
+            // }
+            this.__visionRect = new Rect({shape: param, style: {stroke: '#ccc',fill: 'none', lineDash: [5, 5, 10, 10]}})
+            //this.__visionCircle = new Circle({shape: {cx: param.x+param.width, cy: param.y+param.height,r: 6},style: {fill:'#1DA57A',stroke:null}})
+            this.__visionRect.target = target; //this.__visionCircle.target = 
+            this.__visionRect.type = 'vision' //=this.__visionCircle.type
 
+            //this.__visionCircle.on("mousemove",move.bind(this))
+
+            this.storage.addRoot(this.__visionRect)
+            //this.storage.addRoot(this.__visionCircle)
+            console.log('circle',this.__visionCircle)
+        }
+    },
     setHandlerProxy: function (proxy) {
         if (this.proxy) {
             this.proxy.dispose();

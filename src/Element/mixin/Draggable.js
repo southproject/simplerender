@@ -70,32 +70,19 @@ Draggable.prototype = {
 
     _drag: function (e) {
         var draggingTarget = this._draggingTarget;
-        if (draggingTarget) {
+        if(!draggingTarget) return
+        
+        var x = e.offsetX;
+        var y = e.offsetY;
+        var dx = x - this._x;
+        var dy = y - this._y;
+        this._x = x;
+        this._y = y;
 
-            var x = e.offsetX;
-            var y = e.offsetY;
+        if(draggingTarget.type!=='vision') {
 
-            var dx = x - this._x;
-            var dy = y - this._y;
-            this._x = x;
-            this._y = y;
-
-            draggingTarget.drift(dx, dy, e);
-            if(draggingTarget.type == 'vision'){
-                let tparam = draggingTarget.target.getVisionBoundingRect();
-                //let cx = pa.x+pa.width/2; //e.target.x
-                //let cy = pa.y+pa.height/2; //e.target.y
-                //   let tx = tparam.x+tparam.width;
-                //   ty = tparam.y+tparam.height;
-                let s1 = (dx)/tparam.width;
-                let s2 = (dy)/tparam.height;
-                //if(s1<0.05) s1 = 0.05;
-                //if(s2<0.05) s2 = 0.05;
-                let pa = draggingTarget.target.getBoundingRect();
-                draggingTarget.target.origin = [pa.x,pa.y]
-                draggingTarget.target.changeShape(s1,s2);
-            }
-
+            draggingTarget.drift(dx, dy, e);  
+            this.drawVisionRect(draggingTarget);
             this.dispatchToElement(param(draggingTarget, e), 'drag', e.event);
          //   console.log("draggingTarget:"+draggingTarget)
             var dropTarget = this.findHover(x, y, draggingTarget).target;//拖动元素的放置目标
@@ -111,7 +98,42 @@ Draggable.prototype = {
                     this.dispatchToElement(param(dropTarget, e), 'dragenter', e.event);
                 }
             }
+            return;
         }
+
+        // const pa = draggingTarget.getBoundingRect();
+        // console.log(pa.width,pa.height)
+        if(!draggingTarget.target.originWidth||!draggingTarget.target.originheight){
+            let pa = draggingTarget.getBoundingRect();
+            let m = draggingTarget.target.transform;
+            draggingTarget.target.originWidth = pa.width/m[0];
+            draggingTarget.target.originheight = pa.height/m[3];
+        }
+        if(draggingTarget.type==='vision'){
+            // let vpa = draggingTarget.getVisionBoundingRect();
+
+            // let m = draggingTarget.target.transform;
+            // console.log('mmmmmmmmm',m)
+            // if(x){
+
+            // }
+
+            //let pa = draggingTarget.getBoundingRect();
+
+            let s1 = (dx)/(draggingTarget.target.originWidth);
+            let s2 = (dy)/(draggingTarget.target.originheight);
+
+            // let s1 = (x-pa.x)/(pa.width/m[0]);
+            // let s2 = (y-pa.y)/(pa.height/m[3]);
+
+            let pa2 = draggingTarget.target.getBoundingRect();
+            draggingTarget.target.origin = [pa2.x,pa2.y];
+            draggingTarget.target.changeShape(s1,s2);
+            this.drawVisionRect(draggingTarget.target);
+
+         //   }
+        }
+        return;
     },
 
     _dragEnd: function (e) {
