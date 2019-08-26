@@ -1,6 +1,4 @@
 import {lift} from '../../util/tool/color'
-import Rect from '../graphic/shape/Rect'
-import Circle from '../graphic/shape/Circle'
 
 function Click(){
 
@@ -23,7 +21,7 @@ Click.prototype = {
 
       //  console.log("Click:"+clickingTarget.type)
 
-        if(clickingTarget&&clickingTarget!=='bounding'){
+        if(clickingTarget&&clickingTarget.type!=='vision'&&clickingTarget.type!=='rotate'){
             console.log("进入流程:",clickingTarget.type)
             if(this._preSelect){
                 //_down(this._preSelect)
@@ -33,14 +31,12 @@ Click.prototype = {
             this._highlight(clickingTarget)
             this._preSelect = clickingTarget
             this._chooseObject = clickingTarget
-
         }
         else{
-            this.storage.delRoot(this.__visionRect);
-            //this.storage.delRoot(this.__visionCircle);
+            if(this.__visionRect) this.storage.delRoot(this.__visionRect);
+            if(this.__visionCircle) this.storage.delRoot(this.__visionCircle);
         }
         console.log("点击目标",e.target);
-
     },
     
     /* drawVisionRect: function(target){

@@ -134,15 +134,18 @@ Element.prototype = {
         //     el:{id:this.id,position:[ m[4],m[5]]}
         // })  //是否要为主动和被动的位移分别设置函数
         //this.decomposeTransform();
-
-        console.log(m[0],m[3]);
-
         var s1 = m[0] + dx;
-        var s2 =  m[3] + dy;
+        var s2 = m[3] + dy;
         if(s1<0.05) s1 = 0.05;
         if(s2<0.05) s2 = 0.05;
         this.scale=[s1,s2];
         this.dirty(false);
+    },
+
+    changeRotation: function (angle,pa) {
+        console.log(angle);
+        //let pa = this.getBoundingRect();
+        this.attr({rotation:[angle*2,0],origin:[pa.x+(pa.width/2),pa.y+(pa.height/2)]})
     },
 
     /**
@@ -174,12 +177,12 @@ Element.prototype = {
             // Copy the array
             if (value) {
                 var target = this[key];
-               /* if(stack){
+                /* if(stack){
                     this._preTransform = [...this.transform];
                 //   this._stackDelay = true;//position的设定最是转换到transform上的，到那时可入栈
                    this.__zr.objectList.stack.add(new Action("transform",this,this._preTransform))
-              
-               } */
+                 */
+
                 if (!target) {
                     target = this[key] = [];
                 }

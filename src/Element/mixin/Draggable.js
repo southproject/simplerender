@@ -79,7 +79,7 @@ Draggable.prototype = {
         this._x = x;
         this._y = y;
 
-        if(draggingTarget.type!=='vision') {
+        if(draggingTarget.type!=='vision'&&draggingTarget.type!=='rotate') {
 
             draggingTarget.drift(dx, dy, e);  
             this.drawVisionRect(draggingTarget);
@@ -100,29 +100,16 @@ Draggable.prototype = {
             }
             return;
         }
-
-        // const pa = draggingTarget.getBoundingRect();
-        // console.log(pa.width,pa.height)
         if(!draggingTarget.target.originWidth||!draggingTarget.target.originheight){
             let pa = draggingTarget.getBoundingRect();
             let m = draggingTarget.target.transform;
             draggingTarget.target.originWidth = pa.width/m[0];
             draggingTarget.target.originheight = pa.height/m[3];
         }
+        //如果拖拽元素为
         if(draggingTarget.type==='vision'){
-            // let vpa = draggingTarget.getVisionBoundingRect();
-
-            // let m = draggingTarget.target.transform;
-            // console.log('mmmmmmmmm',m)
-            // if(x){
-
-            // }
-
-            //let pa = draggingTarget.getBoundingRect();
-
             let s1 = (dx)/(draggingTarget.target.originWidth);
             let s2 = (dy)/(draggingTarget.target.originheight);
-
             // let s1 = (x-pa.x)/(pa.width/m[0]);
             // let s2 = (y-pa.y)/(pa.height/m[3]);
 
@@ -130,8 +117,18 @@ Draggable.prototype = {
             draggingTarget.target.origin = [pa2.x,pa2.y];
             draggingTarget.target.changeShape(s1,s2);
             this.drawVisionRect(draggingTarget.target);
+            return;
+        }
+        if(draggingTarget.type==='rotate'){
+            let pa = draggingTarget.target.getBoundingRect();
 
-         //   }
+            let s1 = Math.atan2((x-(pa.x+(pa.width/2))),(y-(pa.y+(pa.height/2))));
+            
+            draggingTarget.target.changeRotation(s1,pa);
+            
+            this.drawVisionRect(draggingTarget.target);
+            console.log('mmmmmmmmm',draggingTarget.target.transform)
+            return;
         }
         return;
     },
@@ -150,13 +147,12 @@ Draggable.prototype = {
                 var username = draggingTarget.__zr.objectList.user;
                 if(draggingTarget.type !== 'text'){
                     draggingTarget.attr("style",{text:"", textFill: 'transparent',fontSize:1,},true,false,true);
-               //   draggingTarget.__zr.objectList.attr( draggingTarget,"style",true,{text:null})
+                    //draggingTarget.__zr.objectList.attr( draggingTarget,"style",true,{text:null})
                 }
                 else{
                     draggingTarget.attr("style",{textOfText:""},true,false,true);
                 }
             }
-           
         }
 
         this.dispatchToElement(param(draggingTarget, e), 'dragend', e.event);
@@ -164,8 +160,8 @@ Draggable.prototype = {
         if (this._dropTarget) {
             this.dispatchToElement(param(this._dropTarget, e), 'drop', e.event);
         }
-       // console.log(e.target.type)
-      // typeof draggingTarget!=="undefined"?draggingTarget._zr.objectList.stack.add(new Action("transform",this,[this._preX,this._preY])):null   //操作入栈
+        // console.log(e.target.type)
+        // typeof draggingTarget!=="undefined"?draggingTarget._zr.objectList.stack.add(new Action("transform",this,[this._preX,this._preY])):null   //操作入栈
         this._draggingTarget = null;
         this._dropTarget = null;
     }
