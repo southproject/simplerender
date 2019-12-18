@@ -134,8 +134,8 @@ Element.prototype = {
         //     el:{id:this.id,position:[ m[4],m[5]]}
         // })  //是否要为主动和被动的位移分别设置函数
         //this.decomposeTransform();
-        var s1 = m[0] + dx;
-        var s2 = m[3] + dy;
+        let s1 = dx;
+        let s2 = dy;
         if(s1<0.05) s1 = 0.05;
         if(s2<0.05) s2 = 0.05;
         this.scale=[s1,s2];
@@ -143,9 +143,10 @@ Element.prototype = {
     },
 
     changeRotation: function (angle,pa) {
-        console.log(angle);
+        console.log('angle',angle);
         //let pa = this.getBoundingRect();
-        this.attr({rotation:[angle*2,0],origin:[pa.x+(pa.width/2),pa.y+(pa.height/2)]})
+        console.log((Math.PI+angle))
+        this.attr({rotation:[((Math.PI+angle)),0],origin:[pa.x+(pa.width/2),pa.y+(pa.height/2)]})
     },
 
     /**

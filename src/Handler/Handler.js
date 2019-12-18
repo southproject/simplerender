@@ -42,7 +42,7 @@ EmptyProxy.prototype.dispose = function () {};
 var handlerNames = [
     'click', 'dblclick', 'mousewheel', 'mouseout',
     'mouseup', 'mousedown', 'mousemove', 'contextmenu'
-];
+];6
 /**
  * @alias module:zrender/Handler
  * @constructor
@@ -98,7 +98,11 @@ var Handler = function(storage, painter, proxy, painterRoot) {
      */
     this._lastY;
     this.__visionRect = null;
-    this.__visionCircle = null;
+    this.__rotateCircle = null;
+    this.__scaleCircle1 = null;
+    this.__scaleCircle2 = null;
+    this.__scaleCircle3 = null;
+    this.__scaleCircle4 = null;
 
     Draggable.call(this);
 
@@ -122,26 +126,77 @@ Handler.prototype = {
             if (!m) {
                 m = target.transform = [1, 0, 0, 1, 0, 0];
             }
-            if((m[0]===1)&&(m[3]===1)){
-                target.originWidth = param.width;
-                target.originHeight = param.height; 
+            if(!target.originWidth){
+                //console.log(target,param);
+                //console.log(m[0],m[3]);
+                target.originWidth = param.width/m[0];
+                target.originHeight = param.height/m[3];
+                //console.log(target.originWidth,target.originHeight);
             }
             target.__zr.showProperty&&(typeof target.__zr.showProperty === 'function')&&target.__zr.showProperty(target.type)
             //console.log("bounding:",param)
 
             if(this.__visionRect) this.storage.delRoot(this.__visionRect);
-            if(this.__visionCircle) this.storage.delRoot(this.__visionCircle);
+            if(this.__rotateCircle) this.storage.delRoot(this.__rotateCircle);
+            if(this.__scaleCircle3){
+                //this.storage.delRoot(this.__scaleCircle1);
+                //this.storage.delRoot(this.__scaleCircle2);
+                this.storage.delRoot(this.__scaleCircle3);
+                //this.storage.delRoot(this.__scaleCircle4);
+            }
 
             this.__visionRect = new Rect({shape: param, style: {stroke: '#ccc',fill: 'none', lineDash: [5, 5, 10, 10]}})
-            this.__visionCircle = new Circle({shape: {cx: param.x+param.width, cy: param.y,r: 6},style: {fill:'#1DA57A',stroke:null}})
-            
-            this.__visionRect.target = this.__visionCircle.target = target; 
-            this.__visionRect.type = 'vision';
-            this.__visionCircle.type = 'rotate';
+            this.__visionRect.draggable = false
+            this.__scaleCircle1 = new Circle({shape: {cx: param.x, cy: param.y,r: 6},style: {fill:'#1DA57A',stroke:null}})
+            this.__scaleCircle2 = new Circle({shape: {cx: param.x+param.width, cy: param.y,r: 6},style: {fill:'#1DA57A',stroke:null}})
+            this.__scaleCircle3 = new Circle({shape: {cx: param.x+param.width, cy: param.y+param.height,r: 6},style: {fill:'#1DA57A',stroke:null}})
+            this.__scaleCircle4 = new Circle({shape: {cx: param.x, cy: param.y+param.height,r: 6},style: {fill:'#1DA57A',stroke:null}})
+            this.__rotateCircle = new Circle({shape: {cx: param.x+param.width/2, cy: param.y,r: 6},style: {fill:'#1DA57A',stroke:null}})
 
-            this.storage.addRoot(this.__visionRect);
-            this.storage.addRoot(this.__visionCircle);
-            //console.log('circle',this.__visionCircle)
+            // this.__visionRect.origin = util.deepClone(target.origin)
+            // this.__visionRect.scale = util.deepClone(target.scale)
+            // this.__visionRect.position = util.deepClone(target.position)
+            // this.__visionRect.rotation  = util.deepClone(target.rotation)
+
+            if(!target.originIndex){
+                var pa = target.getBoundingRect()
+                target.originIndex={
+                    index1: [pa.x,pa.y],
+                    index2: [pa.x+pa.width,pa.y],
+                    index3: [pa.x+pa.width,pa.y+pa.height],
+                    index4: [pa.x,pa.y+pa.height]
+                }
+            }
+            //绑定target
+            this.__visionRect.target = this.__rotateCircle.target = target
+            this.__scaleCircle1.target = this.__scaleCircle2.target = this.__scaleCircle3.target = this.__scaleCircle4.target = target
+
+            //指定type
+            this.__scaleCircle1.type = this.__scaleCircle2.type = this.__scaleCircle3.type = this.__scaleCircle4.type = 'scale'
+            //this.__visionRect.type = 'vision'
+            this.__rotateCircle.type = 'rotate'
+
+            //指定index
+            this.__scaleCircle1.index = 1
+            this.__scaleCircle2.index = 2
+            this.__scaleCircle3.index = 3
+            this.__scaleCircle4.index = 4
+
+            //加入storge存储
+            this.storage.addRoot(this.__visionRect)
+            this.storage.addRoot(this.__rotateCircle)
+            //this.storage.addRoot(this.__scaleCircle1)
+            //this.storage.addRoot(this.__scaleCircle2)
+            this.storage.addRoot(this.__scaleCircle3)
+            //this.storage.addRoot(this.__scaleCircle4)
+   
+            // let trans_m = util.deepClone(m);
+            // console.log(trans_m);
+            // console.log(this.__visionRect);
+            // this.__visionRect.transform = trans_m;
+            // this.__visionRect.decomposeTransform()
+            // //this.__visionRect.applyTransform(trans_m);
+            // console.log(this.__visionRect);
         }
     },
     setHandlerProxy: function (proxy) {
